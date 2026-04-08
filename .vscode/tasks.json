@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "dev",
+			"type": "shell",
+			"command": ".\\node-v24.14.1-win-x64\\npm.cmd run dev",
+			"isBackground": true,
+			"group": "build"
+		}
+	]
+}
