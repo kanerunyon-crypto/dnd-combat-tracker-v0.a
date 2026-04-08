@@ -1,66 +1,84 @@
-# D&D Combat Tracker
+# D&D 5e Combat Tracker
 
-A mobile-responsive React application built with Vite for tracking D&D combat encounters. Use it on any device—phone, tablet, or desktop.
+A full-featured web-based D&D combat tracking application with initiative management, HP tracking, condition management, and preset persistence.
 
 ## Features
 
-- ✅ **Initiative Tracking** - Sort combatants by initiative and manage turn order
-- ✅ **HP Management** - Track current and max HP for each combatant
-- ✅ **Player vs Monster** - Visual distinction (blue for players, red for monsters)
-- ✅ **Mobile Responsive** - Works perfectly on phones, tablets, and desktops
-- ✅ **No Backend Required** - All data stored locally in your browser
-- ✅ **Lightning Fast** - Instant load times and smooth interactions
+### 🎯 Setup Tab
+- **Quick Add Presets** - Add saved character/monster presets with one click
+- **Manual Add** - Create combatants on-the-fly with name, HP, initiative
+- **Player/NPC/Monster** - Distinguish between party members and enemies
+- **Auto-sort** - Combatants automatically sorted by initiative
 
-## Quick Start
+### ⚔️ Tracker Tab
+- **Initiative Display** - Shows current turn, round number, elapsed time
+- **Damage Types** - 13 different damage types (Acid, Fire, Cold, Necrotic, etc.)
+- **Quick Damage Buttons** - 1, 5, 10, 25 damage presets
+- **Quick Healing Buttons** - 1, 5, 10, 25 healing presets
+- **Temp HP** - Track temporary hit points separately
+- **Kill/Full Heal** - One-click actions for instant combat changes
+- **12 Condition Toggles** - Apply/remove conditions (Prone, Poisoned, Concentrating, etc.)
+- **Next Turn** - Advance initiative order automatically
+- **Undo Last** - Revert the last action
+- **Combat Summary** - Real-time display of AC, Speed, HP, Temp HP, Status
 
-### Local Development
+### 📊 Summary Tab
+- **Total Damage Dealt** - Running tally of all damage in combat
+- **Action History** - Complete log of all combat actions with round/turn info
+- **Condition Tracking** - See all status changes
 
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
+### 💾 Presets Tab
+- **Full Editor** - Create and edit character/monster presets
+- **AC/Speed/HP** - Store key stats for quick lookup
+- **Stat Blocks** - Store full D&D stat block descriptions
+- **Player Flag** - Mark allies vs monsters
+- **Auto-Save** - Presets persist in browser storage
+- **Import/Export** - JSON format for easy sharing
 
-2. Run the development server:
-   ```bash
-   npm run dev
-   ```
+### 📱 Responsive Design
+- Works on phones, tablets, and desktop
+- Grid-based layout adapts to screen size
+- Mobile-friendly touch controls
 
-3. Open `http://localhost:5173` in your browser
-
-### Production Build
-
-```bash
-npm run build
-npm run preview
-```
-
-## Deploy to Web
-
-The app can be deployed to any static hosting service in seconds. See [DEPLOYMENT.md](DEPLOYMENT.md) for options:
-
-- **Vercel** - One-click deployment (recommended)
-- **Netlify** - Easy setup with drag-and-drop
-- **GitHub Pages** - Free hosting with GitHub
-- **Docker** - Run anywhere with containerization
+### 🌙 Dark Theme
+- Professional dark interface throughout
+- Easy on the eyes for long sessions
+- Color-coded elements for quick parsing
 
 ## How to Use
 
-1. **Add Combatants** - Enter name, initiative, max HP, and select if it's a player
-2. **Sort by Initiative** - Automatically organize turn order
-3. **Manage HP** - Click the HP input to update during combat
-4. **Next Turn** - Move to the next combatant
-5. **Remove** - Delete combatants as needed
+1. **Setup** - Add your party and enemies (use presets or manual)
+2. **Adjust Initiative** - Initiative box lets you set default for quick-add
+3. **Start Combat** - Click "Start Combat" to begin
+4. **Tracker** - Apply damage, healing, conditions as combat progresses
+5. **Summary** - Check damage totals and action history anytime
 
 ## Technology
 
-- React 18 - UI framework
-- Vite 5 - Fast build tool
-- CSS Grid & Flexbox - Responsive design
+- **React 18** - UI framework
+- **Vite 5** - Fast build tool
+- **LocalStorage** - Preset persistence
+- **CSS Grid/Flexbox** - Responsive layout
+
+## Deployment
+
+The app is deployed on **Vercel** and accessible at:
+```
+https://dnd-combat-tracker-v0-a.vercel.app
+```
+
+No installation required - just open the link and start tracking combat!
+
+## Local Development
+
+```bash
+npm install
+npm run dev
+```
 
 ## Browser Support
 
-Works on all modern browsers:
 - Chrome/Edge (90+)
 - Firefox (88+)
 - Safari (14+)
-- Mobile browsers (iOS Safari, Chrome Mobile, etc.)
+- Mobile browsers (iOS Safari, Chrome Mobile)
