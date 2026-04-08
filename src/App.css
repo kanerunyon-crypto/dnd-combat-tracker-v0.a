@@ -445,6 +445,133 @@ tr.current {
   padding: 12px;
 }
 
+/* Health Bars */
+.hp-bar {
+  display: flex;
+  align-items: center;
+  height: 24px;
+  background-color: #1a1a1a;
+  border-radius: 4px;
+  border: 1px solid #555;
+  overflow: hidden;
+  position: relative;
+  font-size: 11px;
+}
+
+.hp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4a6fc3, #5a7fd3);
+  transition: width 0.2s;
+  min-width: auto;
+}
+
+.hp-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #e0e0e0;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+  z-index: 1;
+}
+
+/* Multi-Select */
+.combatants-filter {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+  background-color: #2d2d2d;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+tr.multi-selected {
+  background-color: #5a4a7a !important;
+  border-left: 3px solid #b0a8ff;
+}
+
+.multi-select-panel {
+  background-color: #2d2d2d;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  margin-top: 10px;
+}
+
+.multi-select-panel h3 {
+  margin-top: 0;
+}
+
+/* Stats Tab */
+.stats-section {
+  background-color: #2d2d2d;
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  margin-bottom: 15px;
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #252525;
+  border: 1px solid #444;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.stats-table th {
+  background-color: #2a2a2a;
+  color: #c0c0c0;
+  padding: 10px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #444;
+  font-size: 13px;
+}
+
+.stats-table td {
+  padding: 10px;
+  color: #e0e0e0;
+  font-size: 13px;
+  border-bottom: 1px solid #3a3a3a;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: #4a6fc3;
+  text-align: center;
+  margin: 15px 0;
+}
+
+/* Small Button */
+.btn-small {
+  padding: 4px 8px !important;
+  font-size: 11px !important;
+  background-color: #3a3a3a !important;
+  margin-left: 5px !important;
+}
+
+.btn-small:hover {
+  background-color: #4a4a4a !important;
+}
+
+/* Shortcuts Info */
+.shortcuts-info {
+  text-align: center;
+  padding: 10px;
+  color: #888;
+  margin-top: 20px;
+  border-top: 1px solid #333;
+}
+
+.shortcuts-info strong {
+  color: #a0a0a0;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .app {

@@ -19,6 +19,11 @@ function App() {
   const [presets, setPresets] = useState({})
   const [editingPresetKey, setEditingPresetKey] = useState(null)
   const [editingPreset, setEditingPreset] = useState(null)
+  const [selectedCombatants, setSelectedCombatants] = useState([])
+  const [damageByType, setDamageByType] = useState({})
+  const [searchQuery, setSearchQuery] = useState('')
+  const [filterDeadOnly, setFilterDeadOnly] = useState(false)
+  const [hideDeadCombatants, setHideDeadCombatants] = useState(false)
 
   const damageTypes = ["Acid", "Bludgeoning", "Cold", "Fire", "Force", "Lightning",
     "Necrotic", "Piercing", "Poison", "Psychic", "Radiant", "Slashing", "Thunder"]
@@ -53,7 +58,17 @@ function App() {
 
   const getDefaultPresets = () => ({
     "PC1": { name: "Elara Moonwhisper", ac: "15", speed: "30 ft", maxHp: 38, isPlayer: true, statblock: "Wizard 5..." },
-    "AllyDragon": { name: "Ignarnoth", ac: "20", speed: "50 ft., fly 100 ft.", maxHp: 280, isPlayer: false, statblock: "Huge dragon..." }
+    "AllyDragon": { name: "Ignarnoth", ac: "20", speed: "50 ft., fly 100 ft.", maxHp: 280, isPlayer: false, statblock: "Huge dragon..." },
+    "Goblin": { name: "Goblin", ac: "15", speed: "30 ft", maxHp: 7, isPlayer: false, statblock: "CR 1/8" },
+    "OrcWarrior": { name: "Orc Warrior", ac: "13", speed: "30 ft", maxHp: 15, isPlayer: false, statblock: "CR 1/2" },
+    "Guard": { name: "Guard", ac: "16", speed: "30 ft", maxHp: 11, isPlayer: false, statblock: "CR 1/8" },
+    "Bandit": { name: "Bandit", ac: "12", speed: "30 ft", maxHp: 16, isPlayer: false, statblock: "CR 1/8" },
+    "Wolf": { name: "Wolf", ac: "13", speed: "40 ft", maxHp: 11, isPlayer: false, statblock: "CR 1/4" },
+    "GiantSpider": { name: "Giant Spider", ac: "14", speed: "30 ft., climb 30 ft", maxHp: 26, isPlayer: false, statblock: "CR 1" },
+    "Zombie": { name: "Zombie", ac: "8", speed: "20 ft", maxHp: 22, isPlayer: false, statblock: "CR 1/4" },
+    "Skeleton": { name: "Skeleton", ac: "15", speed: "30 ft", maxHp: 13, isPlayer: false, statblock: "CR 1/8" },
+    "Troll": { name: "Troll", ac: "15", speed: "30 ft", maxHp: 84, isPlayer: false, statblock: "CR 5" },
+    "DragonWyrmling": { name: "Dragon Wyrmling", ac: "17", speed: "30 ft., fly 60 ft", maxHp: 22, isPlayer: false, statblock: "CR 2" }
   })
 
   const formatTime = (seconds) => {
@@ -262,6 +277,93 @@ function App() {
     setEditingPreset(null)
   }
 
+  const cloneCombatant = (idx) => {
+    const original = tempCombatants[idx]
+    const clone = { ...original, name: original.name + ' (Copy)' }
+    setTempCombatants([...tempCombatants, clone])
+  }
+
+  const toggleMultiSelect = (idx) => {
+    setSelectedCombatants(prev => 
+      prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]
+    )
+  }
+
+  const applyDamageToMultiple = (amount) => {
+    if (selectedCombatants.length === 0) {
+      alert('Select combatants first')
+      return
+    }
+    const c = [...combatants]
+    const actor = c[currentTurnIdx]?.name || 'Unknown'
+    let totalApplied = 0
+    
+    selectedCombatants.forEach(idx => {
+      const target = c[idx]
+      if (amount > 0) {
+        target.curHp = Math.min(target.maxHp, target.curHp + amount)
+      } else {
+        const damage = Math.abs(amount)
+        if (target.tempHp > 0) {
+          const absorbed = Math.min(target.tempHp, damage)
+          target.tempHp -= absorbed
+          const remaining = damage - absorbed
+          if (remaining > 0) target.curHp = Math.max(0, target.curHp - remaining)
+        } else {
+          target.curHp = Math.max(0, target.curHp - damage)
+        }
+        setTotalDamage(prev => prev + damage)
+        totalApplied += damage
+      }
+    })
+    
+    const action = amount > 0 ? 'healing' : 'damage'
+    const entry = `R${roundNum} | ${actor} → ${selectedCombatants.length} targets | ${Math.abs(amount)} ${action}`
+    setCombatants(c)
+    setActionHistory([...actionHistory, entry])
+  }
+
+  const exportSession = () => {
+    const sessionData = {
+      timestamp: new Date().toISOString(),
+      roundsCompleted: roundNum - 1,
+      totalDamage,
+      combatants: combatants.map(c => ({ name: c.name, finalHp: c.curHp, maxHp: c.maxHp })),
+      actionHistory
+    }
+    const json = JSON.stringify(sessionData, null, 2)
+    const blob = new Blob([json], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `combat-${Date.now()}.json`
+    a.click()
+  }
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      alert(`Copied: ${text}`)
+    })
+  }
+
+  // Keyboard shortcuts for quick damage/healing
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (activeTab !== 'tracker' || selectedIdx === null) return
+      const num = parseInt(e.key)
+      if (!isNaN(num) && num >= 1 && num <= 9) {
+        e.preventDefault()
+        if (e.shiftKey) {
+          applyHpChange(num * 5)
+        } else {
+          applyHpChange(-num * 5)
+        }
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [activeTab, selectedIdx, combatants])
+
   return (
     <div className="app">
       <h1>⚔️ D&D 5e Combat Tracker</h1>
@@ -270,6 +372,7 @@ function App() {
         <button className={`tab-btn ${activeTab === 'setup' ? 'active' : ''}`} onClick={() => setActiveTab('setup')}>Setup</button>
         <button className={`tab-btn ${activeTab === 'tracker' ? 'active' : ''}`} onClick={() => setActiveTab('tracker')}>Tracker</button>
         <button className={`tab-btn ${activeTab === 'summary' ? 'active' : ''}`} onClick={() => setActiveTab('summary')}>Summary</button>
+        <button className={`tab-btn ${activeTab === 'stats' ? 'active' : ''}`} onClick={() => setActiveTab('stats')}>Stats</button>
         <button className={`tab-btn ${activeTab === 'presets' ? 'active' : ''}`} onClick={() => setActiveTab('presets')}>Presets</button>
       </div>
 
@@ -307,6 +410,7 @@ function App() {
               {tempCombatants.sort((a, b) => b.initiative - a.initiative).map((c, i) => (
                 <div key={i} className="combatant-item">
                   <span>{c.name} | Init: {c.initiative} | HP: {c.maxHp}</span>
+                  <button onClick={() => cloneCombatant(tempCombatants.indexOf(c))}>Clone</button>
                   <button onClick={() => removeFromSetup(tempCombatants.indexOf(c))}>Remove</button>
                 </div>
               ))}
@@ -369,31 +473,61 @@ function App() {
                 <button key={cond} onClick={() => toggleCondition(cond)} className="cond-btn">{cond}</button>
               ))}
             </div>
+
+            <div className="multi-select-panel">
+              <h3>Multi-Select ({selectedCombatants.length})</h3>
+              <div className="button-section">
+                {[1, 5, 10, 25].map(val => (
+                  <button key={`multi-dmg${val}`} onClick={() => applyDamageToMultiple(-val)}>AoE -{val}</button>
+                ))}
+              </div>
+              <div className="button-section">
+                {[1, 5, 10, 25].map(val => (
+                  <button key={`multi-heal${val}`} onClick={() => applyDamageToMultiple(val)}>AoE +{val}</button>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="combatants-table">
             <h2>Combatants</h2>
+            <div className="combatants-filter">
+              <label>
+                <input type="checkbox" checked={hideDeadCombatants} onChange={e => setHideDeadCombatants(e.target.checked)} />
+                Hide Dead
+              </label>
+              <button onClick={() => setSelectedCombatants([])} className="btn-small">Clear Multi-Select</button>
+            </div>
             <table>
               <thead>
                 <tr>
                   <th>Turn</th>
+                  <th>📋</th>
                   <th>Name</th>
                   <th>AC</th>
-                  <th>HP</th>
-                  <th>Temp HP</th>
+                  <th>Health</th>
+                  <th>Temp</th>
                   <th>Init</th>
                   <th>Speed</th>
                   <th>Status</th>
                 </tr>
               </thead>
               <tbody>
-                {combatants.map((c, i) => (
-                  <tr key={i} onClick={() => setSelectedIdx(i)} className={`${i === selectedIdx ? 'selected' : ''} ${i === currentTurnIdx ? 'current' : ''}`}>
-                    <td>{i === currentTurnIdx ? '→' : ''}</td>
-                    <td>{c.name}</td>
+                {combatants.filter(c => !hideDeadCombatants || c.curHp > 0).map((c, i) => (
+                  <tr key={i} className={`${selectedIdx === combatants.indexOf(c) ? 'selected' : ''} ${i === currentTurnIdx ? 'current' : ''} ${selectedCombatants.includes(i) ? 'multi-selected' : ''}`}>
+                    <td onClick={() => setSelectedIdx(i)}>{i === currentTurnIdx ? '→' : ''}</td>
+                    <td onClick={(e) => { e.stopPropagation(); toggleMultiSelect(i); }}>
+                      <input type="checkbox" checked={selectedCombatants.includes(i)} onChange={() => {}} onClick={(e) => e.stopPropagation()} />
+                    </td>
+                    <td onClick={() => setSelectedIdx(i)}>{c.name}</td>
                     <td>{c.ac || '-'}</td>
-                    <td>{c.curHp} / {c.maxHp}</td>
-                    <td>{c.tempHp > 0 ? c.tempHp : '—'}</td>
+                    <td>
+                      <div className="hp-bar">
+                        <div className="hp-fill" style={{width: `${(c.curHp / c.maxHp) * 100}%`}}></div>
+                        <span className="hp-text">{c.curHp}/{c.maxHp}</span>
+                      </div>
+                    </td>
+                    <td>{c.tempHp > 0 ? `${c.tempHp}t` : '—'}</td>
                     <td>{c.initiative}</td>
                     <td>{c.speed || '—'}</td>
                     <td>{c.status || '—'}</td>
@@ -422,6 +556,56 @@ function App() {
               actionHistory.map((entry, i) => <div key={i} className="log-entry">{entry}</div>)
             )}
           </div>
+          <div className="button-group">
+            <button onClick={exportSession} className="btn-primary">📥 Export Session</button>
+          </div>
+        </div>
+      )}
+
+      {/* Stats Tab */}
+      {activeTab === 'stats' && (
+        <div className="tab-content">
+          <h2>Combat Statistics</h2>
+          
+          <div className="stats-section">
+            <h3>Damage Ranking</h3>
+            <table className="stats-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Health</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {combatants.sort((a, b) => {
+                  const aDamage = a.maxHp - a.curHp
+                  const bDamage = b.maxHp - b.curHp
+                  return bDamage - aDamage
+                }).map((c, i) => {
+                  const damage = c.maxHp - c.curHp
+                  const percent = Math.round((damage / c.maxHp) * 100)
+                  return (
+                    <tr key={i}>
+                      <td>{c.name}</td>
+                      <td>
+                        <div className="hp-bar">
+                          <div className="hp-fill" style={{width: `${(c.curHp / c.maxHp) * 100}%`}}></div>
+                          <span className="hp-text">{c.curHp}/{c.maxHp}</span>
+                        </div>
+                      </td>
+                      <td>{c.curHp <= 0 ? '💀 Dead' : `${damage} dmg (${percent}%)`}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="stats-section">
+            <h3>Rounds Completed</h3>
+            <p className="stat-value">{roundNum - 1}</p>
+          </div>
         </div>
       )}
 
@@ -441,7 +625,11 @@ function App() {
 
             {editingPreset && (
               <div className="preset-editor">
-                <h3>Editing: {editingPresetKey}</h3>
+                <h3>
+                  Editing: {editingPresetKey}
+                  <button onClick={() => copyToClipboard(editingPresetKey)} className="btn-small">📋 Copy ID</button>
+                  <button onClick={() => copyToClipboard(editingPreset.name)} className="btn-small">📋 Copy Name</button>
+                </h3>
                 <input placeholder="Name" value={editingPreset.name} onChange={e => setEditingPreset({...editingPreset, name: e.target.value})} />
                 <input placeholder="AC" value={editingPreset.ac} onChange={e => setEditingPreset({...editingPreset, ac: e.target.value})} />
                 <input placeholder="Speed" value={editingPreset.speed} onChange={e => setEditingPreset({...editingPreset, speed: e.target.value})} />
@@ -455,6 +643,13 @@ function App() {
           </div>
         </div>
       )}
+
+      {/* Keyboard Shortcuts Info */}
+      <div className="shortcuts-info">
+        <small>
+          ⌨️ Shortcuts: Numbers <strong>1-9</strong> (damage) | <strong>Shift+1-9</strong> (heal) | Checkboxes for multi-select AoE
+        </small>
+      </div>
     </div>
   )
 }
