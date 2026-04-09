@@ -243,6 +243,22 @@ function App() {
     setActionHistory([...actionHistory, entry])
   }
 
+  const applyConditionToSelected = (condition) => {
+    setSelectedCondition(condition)
+    if (selectedIdx === null) return
+    const c = [...combatants]
+    const target = c[selectedIdx]
+    if (!target) return
+    const statuses = (target.status || '').split(',').map(s => s.trim()).filter(s => s)
+    if (statuses.includes(condition)) return
+    statuses.push(condition)
+    target.status = statuses.join(', ')
+    const actor = c[currentTurnIdx]?.name || 'Unknown'
+    const entry = `R${roundNum} | ${actor} → ${target.name} | applied ${condition}`
+    setCombatants(c)
+    setActionHistory([...actionHistory, entry])
+  }
+
   const removeConditionFromCombatant = (combatantIdx, condition) => {
     const c = [...combatants]
     const target = c[combatantIdx]
@@ -405,11 +421,6 @@ function App() {
 
   const selectedCombatant = selectedIdx !== null ? combatants[selectedIdx] : null
 
-  const isConditionActive = (condition) => {
-    if (!selectedCombatant) return false
-    return (selectedCombatant.status || '').split(',').map(s => s.trim()).includes(condition)
-  }
-
   const buildVersion = import.meta.env.VITE_BUILD_VERSION || '0.0.0'
   const buildCommit = (import.meta.env.VITE_BUILD_COMMIT || 'local').slice(0, 7)
   const buildTime = import.meta.env.VITE_BUILD_TIME
@@ -513,14 +524,11 @@ function App() {
 
               <div className="damage-type">
                 <label>Condition:</label>
-                <select value={selectedCondition} onChange={e => setSelectedCondition(e.target.value)}>
+                <select value={selectedCondition} onChange={e => applyConditionToSelected(e.target.value)}>
                   {conditions.map(cond => (
                     <option key={cond} value={cond}>{cond}</option>
                   ))}
                 </select>
-                <button onClick={() => toggleCondition(selectedCondition)} className="btn-small">
-                  {isConditionActive(selectedCondition) ? 'Remove' : 'Toggle'}
-                </button>
               </div>
             </div>
 
