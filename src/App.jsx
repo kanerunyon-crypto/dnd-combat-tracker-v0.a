@@ -306,9 +306,11 @@ function App() {
     setTempCombatants([...tempCombatants, clone])
   }
 
-  const toggleMultiSelect = (idx) => {
-    setSelectedCombatants(prev => 
-      prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]
+  const toggleMultiSelect = (combatantId) => {
+    setSelectedCombatants(prev =>
+      prev.includes(combatantId)
+        ? prev.filter(id => id !== combatantId)
+        : [...prev, combatantId]
     )
   }
 
@@ -336,6 +338,7 @@ function App() {
     }
     const c = [...combatants]
     const actor = c[currentTurnIdx]?.name || 'Unknown'
+    let totalAoEDamage = 0
     selectedCombatants.forEach(targetId => {
       const idx = c.findIndex(item => item.id === targetId)
       if (idx === -1) return
@@ -352,9 +355,12 @@ function App() {
         } else {
           target.curHp = Math.max(0, target.curHp - damage)
         }
-        setTotalDamage(prev => prev + damage)
+        totalAoEDamage += damage
       }
     })
+    if (totalAoEDamage > 0) {
+      setTotalDamage(prev => prev + totalAoEDamage)
+    }
     const action = amount > 0 ? 'healing' : 'damage'
     const entry = `R${roundNum} | ${actor} → ${selectedCombatants.length} targets | ${Math.abs(amount)} ${action}`
     setCombatants(c)
@@ -536,15 +542,23 @@ function App() {
 
             <div className="multi-select-panel">
               <h3>Multi-Select ({selectedCombatants.length})</h3>
-              <div className="button-section">
-                {[1, 5, 10, 25].map(val => (
-                  <button key={`multi-dmg${val}`} onClick={() => applyDamageToMultiple(-val)}>AoE -{val}</button>
-                ))}
-              </div>
-              <div className="button-section">
-                {[1, 5, 10, 25].map(val => (
-                  <button key={`multi-heal${val}`} onClick={() => applyDamageToMultiple(val)}>AoE +{val}</button>
-                ))}
+              <div className="aoe-grid">
+                <div className="button-section">
+                  <h3>AoE Damage</h3>
+                  <div className="aoe-buttons">
+                    {[1, 5, 10, 25].map(val => (
+                      <button key={`multi-dmg${val}`} className="aoe-btn" onClick={() => applyDamageToMultiple(-val)}>-{val}</button>
+                    ))}
+                  </div>
+                </div>
+                <div className="button-section">
+                  <h3>AoE Healing</h3>
+                  <div className="aoe-buttons">
+                    {[1, 5, 10, 25].map(val => (
+                      <button key={`multi-heal${val}`} className="aoe-btn" onClick={() => applyDamageToMultiple(val)}>+{val}</button>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -573,13 +587,15 @@ function App() {
                 </tr>
               </thead>
               <tbody>
-                {combatants.filter(c => !hideDeadCombatants || c.curHp > 0).map((c, i) => (
-                  <tr key={i} className={`${selectedIdx === combatants.indexOf(c) ? 'selected' : ''} ${i === currentTurnIdx ? 'current' : ''} ${selectedCombatants.includes(i) ? 'multi-selected' : ''}`}>
-                    <td onClick={() => setSelectedIdx(i)}>{i === currentTurnIdx ? '→' : ''}</td>
-                    <td onClick={(e) => { e.stopPropagation(); toggleMultiSelect(i); }}>
-                      <input type="checkbox" checked={selectedCombatants.includes(i)} onChange={() => {}} onClick={(e) => e.stopPropagation()} />
+                {combatants.filter(c => !hideDeadCombatants || c.curHp > 0).map((c) => {
+                  const rowIdx = combatants.indexOf(c)
+                  return (
+                  <tr key={c.id} className={`${selectedIdx === rowIdx ? 'selected' : ''} ${rowIdx === currentTurnIdx ? 'current' : ''} ${selectedCombatants.includes(c.id) ? 'multi-selected' : ''}`}>
+                    <td onClick={() => setSelectedIdx(rowIdx)}>{rowIdx === currentTurnIdx ? '→' : ''}</td>
+                    <td onClick={(e) => { e.stopPropagation(); toggleMultiSelect(c.id); }}>
+                      <input type="checkbox" checked={selectedCombatants.includes(c.id)} onChange={() => {}} onClick={(e) => e.stopPropagation()} />
                     </td>
-                    <td onClick={() => setSelectedIdx(i)}>{c.name}</td>
+                    <td onClick={() => setSelectedIdx(rowIdx)}>{c.name}</td>
                     <td>{c.ac || '-'}</td>
                     <td>
                       <div className="hp-bar">
@@ -593,13 +609,13 @@ function App() {
                         type="number"
                         className="init-input"
                         value={c.initiative}
-                          onChange={(e) => updateInitiative(i, e.target.value)}
+                          onChange={(e) => updateInitiative(rowIdx, e.target.value)}
                       />
                     </td>
                     <td>{c.speed || '—'}</td>
                     <td>{c.status || '—'}</td>
                   </tr>
-                ))}
+                )})}
               </tbody>
             </table>
           </div>

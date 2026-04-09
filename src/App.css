@@ -624,6 +624,23 @@ tr.multi-selected {
   margin-top: 0;
 }
 
+.aoe-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.aoe-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.aoe-btn {
+  margin-bottom: 0 !important;
+  padding: 8px 10px !important;
+}
+
 /* Stats Tab */
 .stats-section {
   background-color: #2d2d2d;
@@ -733,6 +750,10 @@ tr.multi-selected {
   .combatants-filter,
   .combatants-table thead th {
     position: static;
+  }
+
+  .aoe-grid {
+    grid-template-columns: 1fr;
   }
 
   .presets-container {
