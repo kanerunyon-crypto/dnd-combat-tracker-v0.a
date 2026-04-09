@@ -563,70 +563,72 @@ function App() {
             </div>
           </div>
 
-          <div className="combatants-table">
-            <h2>Combatants</h2>
-            <div className="combatants-filter">
-              <label>
-                <input type="checkbox" checked={hideDeadCombatants} onChange={e => setHideDeadCombatants(e.target.checked)} />
-                Hide Dead
-              </label>
-              <button onClick={() => setSelectedCombatants([])} className="btn-small">Clear Multi-Select</button>
+            <div className="tracker-middle">
+              <div className="combatants-table">
+                <h2>Combatants</h2>
+                <div className="combatants-filter">
+                  <label>
+                    <input type="checkbox" checked={hideDeadCombatants} onChange={e => setHideDeadCombatants(e.target.checked)} />
+                    Hide Dead
+                  </label>
+                  <button onClick={() => setSelectedCombatants([])} className="btn-small">Clear Multi-Select</button>
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Turn</th>
+                      <th>📋</th>
+                      <th>Name</th>
+                      <th>AC</th>
+                      <th>Health</th>
+                      <th>Temp</th>
+                      <th>Init</th>
+                      <th>Speed</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {combatants.filter(c => !hideDeadCombatants || c.curHp > 0).map((c) => {
+                      const rowIdx = combatants.indexOf(c)
+                      return (
+                      <tr key={c.id} className={`${selectedIdx === rowIdx ? 'selected' : ''} ${rowIdx === currentTurnIdx ? 'current' : ''} ${selectedCombatants.includes(c.id) ? 'multi-selected' : ''}`}>
+                        <td onClick={() => setSelectedIdx(rowIdx)}>{rowIdx === currentTurnIdx ? '→' : ''}</td>
+                        <td onClick={(e) => { e.stopPropagation(); toggleMultiSelect(c.id); }}>
+                          <input type="checkbox" checked={selectedCombatants.includes(c.id)} onChange={() => {}} onClick={(e) => e.stopPropagation()} />
+                        </td>
+                        <td onClick={() => setSelectedIdx(rowIdx)}>{c.name}</td>
+                        <td>{c.ac || '-'}</td>
+                        <td>
+                          <div className="hp-bar">
+                            <div className="hp-fill" style={{width: `${(c.curHp / c.maxHp) * 100}%`}}></div>
+                            <span className="hp-text">{c.curHp}/{c.maxHp}</span>
+                          </div>
+                        </td>
+                        <td>{c.tempHp > 0 ? `${c.tempHp}t` : '—'}</td>
+                        <td>
+                          <input
+                            type="number"
+                            className="init-input"
+                            value={c.initiative}
+                              onChange={(e) => updateInitiative(rowIdx, e.target.value)}
+                          />
+                        </td>
+                        <td>{c.speed || '—'}</td>
+                        <td>{c.status || '—'}</td>
+                      </tr>
+                    )})}
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <table>
-              <thead>
-                <tr>
-                  <th>Turn</th>
-                  <th>📋</th>
-                  <th>Name</th>
-                  <th>AC</th>
-                  <th>Health</th>
-                  <th>Temp</th>
-                  <th>Init</th>
-                  <th>Speed</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {combatants.filter(c => !hideDeadCombatants || c.curHp > 0).map((c) => {
-                  const rowIdx = combatants.indexOf(c)
-                  return (
-                  <tr key={c.id} className={`${selectedIdx === rowIdx ? 'selected' : ''} ${rowIdx === currentTurnIdx ? 'current' : ''} ${selectedCombatants.includes(c.id) ? 'multi-selected' : ''}`}>
-                    <td onClick={() => setSelectedIdx(rowIdx)}>{rowIdx === currentTurnIdx ? '→' : ''}</td>
-                    <td onClick={(e) => { e.stopPropagation(); toggleMultiSelect(c.id); }}>
-                      <input type="checkbox" checked={selectedCombatants.includes(c.id)} onChange={() => {}} onClick={(e) => e.stopPropagation()} />
-                    </td>
-                    <td onClick={() => setSelectedIdx(rowIdx)}>{c.name}</td>
-                    <td>{c.ac || '-'}</td>
-                    <td>
-                      <div className="hp-bar">
-                        <div className="hp-fill" style={{width: `${(c.curHp / c.maxHp) * 100}%`}}></div>
-                        <span className="hp-text">{c.curHp}/{c.maxHp}</span>
-                      </div>
-                    </td>
-                    <td>{c.tempHp > 0 ? `${c.tempHp}t` : '—'}</td>
-                    <td>
-                      <input
-                        type="number"
-                        className="init-input"
-                        value={c.initiative}
-                          onChange={(e) => updateInitiative(rowIdx, e.target.value)}
-                      />
-                    </td>
-                    <td>{c.speed || '—'}</td>
-                    <td>{c.status || '—'}</td>
-                  </tr>
-                )})}
-              </tbody>
-            </table>
-          </div>
 
-          <div className="button-group tracker-actions">
-            <button onClick={nextTurn} className="btn-primary">Next Turn</button>
-            <button onClick={undoLast}>Undo Last</button>
-            <button onClick={stopCombat}>Stop Combat</button>
-            <button onClick={resetCombat}>Reset</button>
-          </div>
-        </div>
+              <div className="button-group tracker-actions">
+                <button onClick={nextTurn} className="btn-primary">Next Turn</button>
+                <button onClick={undoLast}>Undo Last</button>
+                <button onClick={stopCombat}>Stop Combat</button>
+                <button onClick={resetCombat}>Reset</button>
+              </div>
+            </div>
 
         <div className="tracker-right">
           <div className="selected-panel">

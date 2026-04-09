@@ -317,7 +317,7 @@ button:active {
 
 .tracker-layout {
   display: grid;
-  grid-template-columns: 1.65fr 0.95fr;
+  grid-template-columns: 1.1fr 1.55fr 0.9fr;
   gap: 20px;
   flex: 1;
   min-height: 0;
@@ -335,6 +335,11 @@ button:active {
   flex-direction: column;
   gap: 16px;
   min-height: 0;
+}
+
+.tracker-middle {
+  min-height: 0;
+  display: flex;
 }
 
 .selected-panel {
