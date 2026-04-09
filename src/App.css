@@ -226,10 +226,11 @@ button:active {
 }
 
 .tracker-tab {
-  height: calc(100vh - 180px);
+  min-height: calc(100vh - 180px);
+  height: auto;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .controls {
@@ -760,6 +761,56 @@ tr.multi-selected {
   margin-top: 6px;
   font-size: 11px;
   color: #7f8ba5;
+}
+
+@media (max-width: 1500px) {
+  .app {
+    max-width: 100%;
+  }
+
+  .tracker-layout {
+    grid-template-columns: 1.1fr 1.25fr;
+  }
+
+  .tracker-left {
+    grid-column: 1;
+  }
+
+  .tracker-middle {
+    grid-column: 2;
+  }
+
+  .tracker-right {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 1200px), (max-height: 900px) {
+  .tracker-tab {
+    min-height: 0;
+    height: auto;
+    overflow: visible;
+  }
+
+  .tracker-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .tracker-left,
+  .tracker-middle,
+  .tracker-right {
+    grid-column: 1;
+  }
+
+  .combatants-table {
+    max-height: none;
+  }
+
+  .combatants-table h2,
+  .combatants-filter,
+  .combatants-table thead th {
+    position: static;
+  }
 }
 
 /* Responsive */
