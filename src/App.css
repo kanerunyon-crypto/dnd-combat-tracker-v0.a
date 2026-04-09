@@ -620,6 +620,27 @@ tr.multi-selected {
   border-left: 3px solid #b0a8ff;
 }
 
+.status-cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.status-chip {
+  border: 1px solid #6d5aa8;
+  background-color: #3f3360;
+  color: #e9e2ff;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.status-chip:hover {
+  background-color: #564188;
+  border-color: #8c73d1;
+}
+
 .multi-select-panel {
   background-color: #2d2d2d;
   padding: 12px;

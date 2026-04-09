@@ -243,6 +243,19 @@ function App() {
     setActionHistory([...actionHistory, entry])
   }
 
+  const removeConditionFromCombatant = (combatantIdx, condition) => {
+    const c = [...combatants]
+    const target = c[combatantIdx]
+    if (!target) return
+    const statuses = (target.status || '').split(',').map(s => s.trim()).filter(s => s)
+    if (!statuses.includes(condition)) return
+    target.status = statuses.filter(s => s !== condition).join(', ')
+    const actor = c[currentTurnIdx]?.name || 'Unknown'
+    const entry = `R${roundNum} | ${actor} → ${target.name} | removed ${condition}`
+    setCombatants(c)
+    setActionHistory([...actionHistory, entry])
+  }
+
   const nextTurn = () => {
     const nextIdx = (currentTurnIdx + 1) % combatants.length
     if (nextIdx === 0) setRoundNum(prev => prev + 1)
@@ -614,7 +627,22 @@ function App() {
                           />
                         </td>
                         <td>{c.speed || '—'}</td>
-                        <td>{c.status || '—'}</td>
+                        <td>
+                          {c.status ? (
+                            <div className="status-cell" onClick={(e) => e.stopPropagation()}>
+                              {(c.status || '').split(',').map(s => s.trim()).filter(Boolean).map(status => (
+                                <button
+                                  key={`${c.id}-${status}`}
+                                  className="status-chip"
+                                  onClick={() => removeConditionFromCombatant(rowIdx, status)}
+                                  title={`Remove ${status}`}
+                                >
+                                  {status} ×
+                                </button>
+                              ))}
+                            </div>
+                          ) : '—'}
+                        </td>
                       </tr>
                     )})}
                   </tbody>
