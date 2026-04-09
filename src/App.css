@@ -16,7 +16,7 @@ body {
 }
 
 .app {
-  max-width: 1400px;
+  max-width: 1680px;
   margin: 0 auto;
   padding: 20px;
   background-color: #1e1e1e;
@@ -317,7 +317,7 @@ button:active {
 
 .tracker-layout {
   display: grid;
-  grid-template-columns: 1.1fr 0.18fr 1.55fr 0.9fr;
+  grid-template-columns: 1.05fr 0.1fr 1.45fr 1.2fr;
   gap: 20px;
   flex: 1;
   min-height: 0;
