@@ -97,6 +97,27 @@ function App() {
     return { sorted, newCurrentIdx, newSelectedIdx }
   }
 
+  const syncActiveCombatants = (list, preserveCurrentId, preserveSelectedId) => {
+    const activeCombatants = list.filter(combatant => combatant.curHp > 0)
+
+    if (activeCombatants.length === 0) {
+      setCombatants([])
+      setCurrentTurnIdx(0)
+      setCurrentTurnId(null)
+      setSelectedIdx(null)
+      setSelectedCombatants([])
+      return []
+    }
+
+    const { sorted, newCurrentIdx, newSelectedIdx } = sortCombatants(activeCombatants, preserveCurrentId, preserveSelectedId)
+    setCombatants(sorted)
+    setCurrentTurnIdx(newCurrentIdx)
+    setCurrentTurnId(sorted[newCurrentIdx]?.id || null)
+    setSelectedIdx(newSelectedIdx)
+    setSelectedCombatants(prev => prev.filter(id => sorted.some(combatant => combatant.id === id)))
+    return sorted
+  }
+
   const addPresetCombatant = (presetKey) => {
     const preset = presets[presetKey]
     if (!preset) return
@@ -170,6 +191,7 @@ function App() {
     const c = [...combatants]
     const target = c[selectedIdx]
     const actor = c[currentTurnIdx].name
+    const preserveCurrentId = c[currentTurnIdx]?.id || null
     let entry = ''
 
     if (amount === 'kill') {
@@ -201,7 +223,8 @@ function App() {
       setTotalDamage(prev => prev + damage)
     }
 
-    setCombatants(c)
+    const preserveSelectedId = target.curHp > 0 ? target.id : preserveCurrentId
+    syncActiveCombatants(c, preserveCurrentId, preserveSelectedId)
     setActionHistory([...actionHistory, entry])
   }
 
@@ -273,9 +296,11 @@ function App() {
   }
 
   const nextTurn = () => {
+    if (combatants.length === 0) return
     const nextIdx = (currentTurnIdx + 1) % combatants.length
     if (nextIdx === 0) setRoundNum(prev => prev + 1)
     setCurrentTurnIdx(nextIdx)
+    setCurrentTurnId(combatants[nextIdx]?.id || null)
     setSelectedIdx(nextIdx)
   }
 
@@ -367,6 +392,8 @@ function App() {
     }
     const c = [...combatants]
     const actor = c[currentTurnIdx]?.name || 'Unknown'
+    const preserveCurrentId = c[currentTurnIdx]?.id || null
+    const preserveSelectedId = c[selectedIdx]?.curHp > 0 ? c[selectedIdx]?.id || null : preserveCurrentId
     let totalAoEDamage = 0
     selectedCombatants.forEach(targetId => {
       const idx = c.findIndex(item => item.id === targetId)
@@ -392,7 +419,7 @@ function App() {
     }
     const action = amount > 0 ? 'healing' : 'damage'
     const entry = `R${roundNum} | ${actor} → ${selectedCombatants.length} targets | ${Math.abs(amount)} ${action}`
-    setCombatants(c)
+    syncActiveCombatants(c, preserveCurrentId, preserveSelectedId)
     setActionHistory([...actionHistory, entry])
   }
 
