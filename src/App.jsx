@@ -122,6 +122,7 @@ function App() {
     if (!preset) return
     const initiative = newInitiative ? parseInt(newInitiative) : 0
     setTempCombatants([...tempCombatants, {
+      id: generateId(),
       key: presetKey,
       name: preset.name,
       isPlayer: preset.isPlayer,
@@ -636,8 +637,16 @@ function App() {
                       return (
                       <tr key={c.id} className={`${selectedIdx === rowIdx ? 'selected' : ''} ${rowIdx === currentTurnIdx ? 'current' : ''} ${selectedCombatants.includes(c.id) ? 'multi-selected' : ''}`}>
                         <td onClick={() => setSelectedIdx(rowIdx)}>{rowIdx === currentTurnIdx ? '→' : ''}</td>
-                        <td onClick={(e) => { e.stopPropagation(); toggleMultiSelect(c.id); }}>
-                          <input type="checkbox" checked={selectedCombatants.includes(c.id)} onChange={() => {}} onClick={(e) => e.stopPropagation()} />
+                        <td className="checkbox-cell">
+                          <input
+                            type="checkbox"
+                            checked={selectedCombatants.includes(c.id)}
+                            onChange={(e) => {
+                              e.stopPropagation()
+                              toggleMultiSelect(c.id)
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                          />
                         </td>
                         <td onClick={() => setSelectedIdx(rowIdx)}>{c.name}</td>
                         <td>{c.ac || '-'}</td>

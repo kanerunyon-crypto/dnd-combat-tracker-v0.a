@@ -131,6 +131,15 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
+.checkbox-cell {
+  width: 44px;
+  text-align: center;
+}
+
+.checkbox-cell input[type="checkbox"] {
+  margin: 0;
+}
+
 /* Buttons */
 button {
   background-color: #3a3a3a;
