@@ -470,7 +470,7 @@ function App() {
 
       {/* Tracker Tab */}
       {activeTab === 'tracker' && (
-        <div className="tab-content">
+        <div className="tab-content tracker-tab">
           <div className="stats-bar">
             Elapsed: {formatTime(elapsedTime)} | Round {roundNum} | Current: {combatants[currentTurnIdx]?.name || '-'}
           </div>
@@ -598,7 +598,7 @@ function App() {
             </table>
           </div>
 
-          <div className="button-group">
+          <div className="button-group tracker-actions">
             <button onClick={nextTurn} className="btn-primary">Next Turn</button>
             <button onClick={undoLast}>Undo Last</button>
             <button onClick={stopCombat}>Stop Combat</button>
