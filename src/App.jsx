@@ -184,6 +184,11 @@ function App() {
   }
 
   const applyHpChange = (amount) => {
+    if (typeof amount === 'number' && selectedCombatants.length > 0) {
+      applyDamageToMultiple(amount)
+      return
+    }
+
     if (selectedIdx === null) {
       alert('Select a combatant first')
       return
