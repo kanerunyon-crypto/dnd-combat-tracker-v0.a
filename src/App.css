@@ -278,17 +278,82 @@ button:active {
   margin-top: 0;
 }
 
-.cond-btn {
-  width: 100%;
-  margin-bottom: 6px;
-  padding: 8px;
-  background-color: #3a3a3a;
-  text-align: left;
-  font-size: 12px;
+.condition-control {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
-.cond-btn:hover {
-  background-color: #4a4a4a;
+.cond-select {
+  background-color: #1f1f1f;
+  color: #e0e0e0;
+  border: 1px solid #444;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  min-width: 140px;
+}
+
+.condition-active {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #c0c0c0;
+}
+
+.tracker-layout {
+  display: grid;
+  grid-template-columns: 1.65fr 0.95fr;
+  gap: 20px;
+}
+
+.tracker-left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tracker-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.selected-panel {
+  background-color: #2d2d2d;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #444;
+}
+
+.selected-panel h3 {
+  margin-bottom: 12px;
+}
+
+.selected-row {
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.statblock {
+  margin-top: 14px;
+}
+
+.statblock h4 {
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.statblock pre {
+  background-color: #1d1d1d;
+  color: #d8d8d8;
+  padding: 12px;
+  border-radius: 6px;
+  max-height: 280px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 12px;
 }
 
 /* Combatants Table */
@@ -584,6 +649,10 @@ tr.multi-selected {
 
   .button-grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .tracker-layout {
+    grid-template-columns: 1fr;
   }
 
   .presets-container {

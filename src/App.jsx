@@ -34,6 +34,8 @@ function App() {
     "Incapacitated", "Stunned", "Paralyzed", "Charmed", "Frightened", "Invisible", "Grappled"
   ]
 
+  const [selectedCondition, setSelectedCondition] = useState(conditions[0])
+
   // Load presets from localStorage
   useEffect(() => {
     const saved = localStorage.getItem('dnd_presets')
@@ -109,7 +111,8 @@ function App() {
       initiative: initiative,
       ac: preset.ac,
       speed: preset.speed,
-      status: ''
+      status: '',
+      statblock: preset.statblock || ''
     }])
     setNewInitiative('')
   }
@@ -130,7 +133,8 @@ function App() {
       initiative: parseInt(newCombatant.initiative) || 0,
       ac: '',
       speed: '',
-      status: ''
+      status: '',
+      statblock: ''
     }])
     setNewCombatant({ name: '', initiative: 0, maxHp: 0, isPlayer: true })
   }
@@ -380,6 +384,13 @@ function App() {
     })
   }
 
+  const selectedCombatant = selectedIdx !== null ? combatants[selectedIdx] : null
+
+  const isConditionActive = (condition) => {
+    if (!selectedCombatant) return false
+    return (selectedCombatant.status || '').split(',').map(s => s.trim()).includes(condition)
+  }
+
   // Keyboard shortcuts for quick damage/healing
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -464,7 +475,9 @@ function App() {
             Elapsed: {formatTime(elapsedTime)} | Round {roundNum} | Current: {combatants[currentTurnIdx]?.name || '-'}
           </div>
 
-          <div className="controls">
+          <div className="tracker-layout">
+            <div className="tracker-left">
+              <div className="controls">
             <div className="damage-type">
               <label>Damage Type:</label>
               <select value={damageType} onChange={e => setDamageType(e.target.value)}>
@@ -502,10 +515,20 @@ function App() {
             </div>
 
             <div className="conditions-panel">
-              <h3>Conditions</h3>
-              {conditions.map(cond => (
-                <button key={cond} onClick={() => toggleCondition(cond)} className="cond-btn">{cond}</button>
-              ))}
+              <h3>Condition</h3>
+              <div className="condition-control">
+                <select className="cond-select" value={selectedCondition} onChange={e => setSelectedCondition(e.target.value)}>
+                  {conditions.map(cond => (
+                    <option key={cond} value={cond}>{cond}</option>
+                  ))}
+                </select>
+                <button onClick={() => toggleCondition(selectedCondition)} className="btn-small">
+                  {isConditionActive(selectedCondition) ? 'Remove' : 'Toggle'}
+                </button>
+              </div>
+              <div className="condition-active">
+                <strong>Active:</strong> {selectedCombatant?.status || 'None'}
+              </div>
             </div>
 
             <div className="multi-select-panel">
@@ -585,6 +608,31 @@ function App() {
             <button onClick={resetCombat}>Reset</button>
           </div>
         </div>
+
+        <div className="tracker-right">
+          <div className="selected-panel">
+            <h3>Selected Combatant</h3>
+            {selectedCombatant ? (
+              <>
+                <div className="selected-row"><strong>Name:</strong> {selectedCombatant.name}</div>
+                <div className="selected-row"><strong>AC:</strong> {selectedCombatant.ac || '—'}</div>
+                <div className="selected-row"><strong>Speed:</strong> {selectedCombatant.speed || '—'}</div>
+                <div className="selected-row"><strong>HP:</strong> {selectedCombatant.curHp}/{selectedCombatant.maxHp}</div>
+                <div className="selected-row"><strong>Temp HP:</strong> {selectedCombatant.tempHp || '0'}</div>
+                <div className="selected-row"><strong>Init:</strong> {selectedCombatant.initiative}</div>
+                <div className="selected-row"><strong>Status:</strong> {selectedCombatant.status || 'None'}</div>
+                <div className="selected-row"><strong>Preset:</strong> {selectedCombatant.key || 'Manual'}</div>
+                <div className="statblock">
+                  <h4>Stat Block</h4>
+                  <pre>{selectedCombatant.statblock || 'No statblock available.'}</pre>
+                </div>
+              </>
+            ) : (
+              <p>Select a combatant from the table to see details here.</p>
+            )}
+          </div>
+        </div>
+      </div>
       )}
 
       {/* Summary Tab */}
