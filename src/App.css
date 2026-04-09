@@ -317,7 +317,7 @@ button:active {
 
 .tracker-layout {
   display: grid;
-  grid-template-columns: 1.1fr 1.55fr 0.9fr;
+  grid-template-columns: 1.1fr 0.18fr 1.55fr 0.9fr;
   gap: 20px;
   flex: 1;
   min-height: 0;
@@ -328,6 +328,7 @@ button:active {
   grid-template-rows: auto minmax(0, 1fr) auto;
   gap: 12px;
   min-height: 0;
+  grid-column: 1;
 }
 
 .tracker-right {
@@ -335,11 +336,13 @@ button:active {
   flex-direction: column;
   gap: 16px;
   min-height: 0;
+  grid-column: 4;
 }
 
 .tracker-middle {
   min-height: 0;
   display: flex;
+  grid-column: 3;
 }
 
 .selected-panel {
