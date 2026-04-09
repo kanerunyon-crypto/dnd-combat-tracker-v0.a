@@ -692,6 +692,12 @@ tr.multi-selected {
   color: #a0a0a0;
 }
 
+.build-info {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #7f8ba5;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .app {

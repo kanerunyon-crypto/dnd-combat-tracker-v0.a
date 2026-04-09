@@ -391,6 +391,12 @@ function App() {
     return (selectedCombatant.status || '').split(',').map(s => s.trim()).includes(condition)
   }
 
+  const buildVersion = import.meta.env.VITE_BUILD_VERSION || '0.0.0'
+  const buildCommit = (import.meta.env.VITE_BUILD_COMMIT || 'local').slice(0, 7)
+  const buildTime = import.meta.env.VITE_BUILD_TIME
+    ? new Date(import.meta.env.VITE_BUILD_TIME).toLocaleString()
+    : 'local build'
+
   // Keyboard shortcuts for quick damage/healing
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -735,6 +741,9 @@ function App() {
         <small>
           ⌨️ Shortcuts: Numbers <strong>1-9</strong> (damage) | <strong>Shift+1-9</strong> (heal) | Checkboxes for multi-select AoE
         </small>
+        <div className="build-info">
+          Build v{buildVersion} | {buildCommit} | {buildTime}
+        </div>
       </div>
     </div>
   )
