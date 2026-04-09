@@ -189,6 +189,11 @@ function App() {
       return
     }
 
+    if ((amount === 'kill' || amount === 'full') && selectedCombatants.length > 0) {
+      applyActionToMultiple(amount)
+      return
+    }
+
     if (selectedIdx === null) {
       alert('Select a combatant first')
       return
@@ -234,6 +239,20 @@ function App() {
   }
 
   const applyTempHp = (amount) => {
+    if (selectedCombatants.length > 0) {
+      const c = [...combatants]
+      const actor = c[currentTurnIdx]?.name || 'Unknown'
+      selectedCombatants.forEach(targetId => {
+        const idx = c.findIndex(item => item.id === targetId)
+        if (idx === -1) return
+        c[idx].tempHp += amount
+      })
+      const entry = `R${roundNum} | ${actor} → ${selectedCombatants.length} targets | added ${amount} temp HP`
+      setCombatants(c)
+      setActionHistory([...actionHistory, entry])
+      return
+    }
+
     if (selectedIdx === null) {
       alert('Select a combatant first')
       return
@@ -424,6 +443,38 @@ function App() {
     }
     const action = amount > 0 ? 'healing' : 'damage'
     const entry = `R${roundNum} | ${actor} → ${selectedCombatants.length} targets | ${Math.abs(amount)} ${action}`
+    syncActiveCombatants(c, preserveCurrentId, preserveSelectedId)
+    setActionHistory([...actionHistory, entry])
+  }
+
+  const applyActionToMultiple = (actionType) => {
+    if (selectedCombatants.length === 0) {
+      alert('Select combatants first')
+      return
+    }
+
+    const c = [...combatants]
+    const actor = c[currentTurnIdx]?.name || 'Unknown'
+    const preserveCurrentId = c[currentTurnIdx]?.id || null
+
+    selectedCombatants.forEach(targetId => {
+      const idx = c.findIndex(item => item.id === targetId)
+      if (idx === -1) return
+      const target = c[idx]
+      if (actionType === 'kill') {
+        target.curHp = 0
+        target.tempHp = 0
+      } else if (actionType === 'full') {
+        target.curHp = target.maxHp
+      }
+    })
+
+    const preserveSelectedId = actionType === 'kill'
+      ? preserveCurrentId
+      : (c[selectedIdx]?.id || preserveCurrentId)
+
+    const label = actionType === 'kill' ? 'KILLED' : 'Full Heal'
+    const entry = `R${roundNum} | ${actor} → ${selectedCombatants.length} targets | ${label}`
     syncActiveCombatants(c, preserveCurrentId, preserveSelectedId)
     setActionHistory([...actionHistory, entry])
   }
