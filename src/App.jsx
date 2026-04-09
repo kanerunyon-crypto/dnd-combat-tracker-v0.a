@@ -12,6 +12,7 @@ function App() {
   const [timerRunning, setTimerRunning] = useState(false)
   const [elapsedTime, setElapsedTime] = useState(0)
   const [selectedIdx, setSelectedIdx] = useState(null)
+  const [currentTurnId, setCurrentTurnId] = useState(null)
   const [startTime, setStartTime] = useState(null)
   const [newCombatant, setNewCombatant] = useState({ name: '', initiative: 0, maxHp: 0, isPlayer: true })
   const [newInitiative, setNewInitiative] = useState('')
@@ -78,6 +79,14 @@ function App() {
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
   }
 
+  const generateId = () => `c_${Date.now()}_${Math.random().toString(16).slice(2)}`
+  const sortCombatants = (list, preserveCurrentId, preserveSelectedId) => {
+    const sorted = [...list].sort((a, b) => b.initiative - a.initiative)
+    const newCurrentIdx = preserveCurrentId ? Math.max(0, sorted.findIndex(c => c.id === preserveCurrentId)) : 0
+    const newSelectedIdx = preserveSelectedId ? Math.max(0, sorted.findIndex(c => c.id === preserveSelectedId)) : (sorted.length ? 0 : null)
+    return { sorted, newCurrentIdx, newSelectedIdx }
+  }
+
   const addPresetCombatant = (presetKey) => {
     const preset = presets[presetKey]
     if (!preset) return
@@ -103,6 +112,7 @@ function App() {
       return
     }
     setTempCombatants([...tempCombatants, {
+      id: generateId(),
       key: null,
       name: newCombatant.name,
       isPlayer: newCombatant.isPlayer,
@@ -129,6 +139,7 @@ function App() {
     const sorted = [...tempCombatants].sort((a, b) => b.initiative - a.initiative)
     setCombatants(sorted)
     setCurrentTurnIdx(0)
+    setCurrentTurnId(sorted[0]?.id || null)
     setRoundNum(1)
     setTotalDamage(0)
     setActionHistory([])
@@ -279,7 +290,7 @@ function App() {
 
   const cloneCombatant = (idx) => {
     const original = tempCombatants[idx]
-    const clone = { ...original, name: original.name + ' (Copy)' }
+    const clone = { ...original, id: generateId(), name: original.name + ' (Copy)' }
     setTempCombatants([...tempCombatants, clone])
   }
 
@@ -289,6 +300,23 @@ function App() {
     )
   }
 
+  const updateInitiative = (idx, value) => {
+    const c = [...combatants]
+    if (!c[idx]) return
+    const target = c[idx]
+    const oldValue = target.initiative
+    target.initiative = parseInt(value) || 0
+    const actor = c[currentTurnIdx]?.name || 'Unknown'
+    const entry = `R${roundNum} | ${actor} → ${target.name} | initiative ${oldValue} → ${target.initiative}`
+    const preserveSelectedId = c[selectedIdx]?.id || null
+    const { sorted, newCurrentIdx, newSelectedIdx } = sortCombatants(c, currentTurnId, preserveSelectedId)
+    setCombatants(sorted)
+    setCurrentTurnIdx(newCurrentIdx)
+    setCurrentTurnId(sorted[newCurrentIdx]?.id || null)
+    setSelectedIdx(newSelectedIdx)
+    setActionHistory([...actionHistory, entry])
+  }
+
   const applyDamageToMultiple = (amount) => {
     if (selectedCombatants.length === 0) {
       alert('Select combatants first')
@@ -296,9 +324,9 @@ function App() {
     }
     const c = [...combatants]
     const actor = c[currentTurnIdx]?.name || 'Unknown'
-    let totalApplied = 0
-    
-    selectedCombatants.forEach(idx => {
+    selectedCombatants.forEach(targetId => {
+      const idx = c.findIndex(item => item.id === targetId)
+      if (idx === -1) return
       const target = c[idx]
       if (amount > 0) {
         target.curHp = Math.min(target.maxHp, target.curHp + amount)
@@ -313,10 +341,8 @@ function App() {
           target.curHp = Math.max(0, target.curHp - damage)
         }
         setTotalDamage(prev => prev + damage)
-        totalApplied += damage
       }
     })
-    
     const action = amount > 0 ? 'healing' : 'damage'
     const entry = `R${roundNum} | ${actor} → ${selectedCombatants.length} targets | ${Math.abs(amount)} ${action}`
     setCombatants(c)
@@ -528,7 +554,14 @@ function App() {
                       </div>
                     </td>
                     <td>{c.tempHp > 0 ? `${c.tempHp}t` : '—'}</td>
-                    <td>{c.initiative}</td>
+                    <td>
+                      <input
+                        type="number"
+                        className="init-input"
+                        value={c.initiative}
+                          onChange={(e) => updateInitiative(i, e.target.value)}
+                      />
+                    </td>
                     <td>{c.speed || '—'}</td>
                     <td>{c.status || '—'}</td>
                   </tr>
