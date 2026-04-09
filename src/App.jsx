@@ -60,6 +60,11 @@ function App() {
   const getDefaultPresets = () => ({
     "PC1": { name: "Elara Moonwhisper", ac: "15", speed: "30 ft", maxHp: 38, isPlayer: true, statblock: "Wizard 5..." },
     "AllyDragon": { name: "Ignarnoth", ac: "20", speed: "50 ft., fly 100 ft.", maxHp: 280, isPlayer: false, statblock: "Huge dragon..." },
+    "GlassboundAmethyst": { name: "Glassbound Amethyst", ac: "18", speed: "30 ft", maxHp: 180, isPlayer: false, statblock: "CR 9\nMultiattack: 3 attacks with Thorn-Quadraxis\nThorn-Quadraxis: +14 to hit, 28 (4d8 + 10) slashing + 14 (4d6) poison damage\nRage Echo: Resistance to bludgeoning, piercing, slashing; advantage on Strength saves" },
+    "GlassboundJosie": { name: "Glassbound Josie", ac: "19", speed: "30 ft", maxHp: 165, isPlayer: false, statblock: "CR 9\nMultiattack: 4 shots with Thorn-Apex Longbow\nThorn-Apex: +15 to hit, 22 (3d8 + 9) piercing + 11 (2d10) poison damage (ignores cover)\nSpore Volley (Recharge 5-6): 30-ft cone, DC 17 Con save, 55 (10d10) poison damage" },
+    "GlassboundNyserra": { name: "Glassbound Nyserra", ac: "17", speed: "30 ft", maxHp: 155, isPlayer: false, statblock: "CR 9\nMultiattack: 2 staff attacks + spell\nVeinstorm Echo: +13 to hit, 18 (3d6 + 8) bludgeoning + 22 (4d10) necrotic\nCorrupted Wild Shape: Can turn into a Huge Vine Drake (as your old drake form but with +50 HP and poison breath)" },
+    "GlassboundSmokey": { name: "Glassbound Smokey", ac: "16", speed: "30 ft", maxHp: 210, isPlayer: false, statblock: "CR 8\nMultiattack: Bite + Claws\nBite: +13 to hit, 26 (4d8 + 8) piercing + 18 (4d8) poison\nCorrupting Roar (Recharge 5-6): 60-ft cone, DC 17 Con save, 44 (8d10) poison + frightened" },
+    "GlassboundDrowPitFighters": { name: "4x Glassbound Drow Pit Fighters", ac: "17", speed: "30 ft", maxHp: 95, isPlayer: false, statblock: "CR 6 each\nMultiattack: 3 shortsword attacks\nThornblade: +10 to hit, 15 (2d6 + 8) piercing + 7 (2d6) poison" },
     "Goblin": { name: "Goblin", ac: "15", speed: "30 ft", maxHp: 7, isPlayer: false, statblock: "CR 1/8" },
     "OrcWarrior": { name: "Orc Warrior", ac: "13", speed: "30 ft", maxHp: 15, isPlayer: false, statblock: "CR 1/2" },
     "Guard": { name: "Guard", ac: "16", speed: "30 ft", maxHp: 11, isPlayer: false, statblock: "CR 1/8" },
