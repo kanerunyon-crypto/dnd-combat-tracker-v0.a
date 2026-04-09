@@ -254,6 +254,20 @@ button:active {
 
 .tracker-filters .damage-type {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.tracker-filters .damage-type label {
+  margin-right: 0;
+}
+
+.tracker-filters .damage-type select {
+  width: 100%;
+  max-width: none;
+  margin: 0;
 }
 
 .button-grid {
