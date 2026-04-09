@@ -478,11 +478,25 @@ function App() {
           <div className="tracker-layout">
             <div className="tracker-left">
               <div className="controls">
-            <div className="damage-type">
-              <label>Damage Type:</label>
-              <select value={damageType} onChange={e => setDamageType(e.target.value)}>
-                {damageTypes.map(dt => <option key={dt}>{dt}</option>)}
-              </select>
+            <div className="tracker-filters">
+              <div className="damage-type">
+                <label>Damage Type:</label>
+                <select value={damageType} onChange={e => setDamageType(e.target.value)}>
+                  {damageTypes.map(dt => <option key={dt}>{dt}</option>)}
+                </select>
+              </div>
+
+              <div className="damage-type">
+                <label>Condition:</label>
+                <select value={selectedCondition} onChange={e => setSelectedCondition(e.target.value)}>
+                  {conditions.map(cond => (
+                    <option key={cond} value={cond}>{cond}</option>
+                  ))}
+                </select>
+                <button onClick={() => toggleCondition(selectedCondition)} className="btn-small">
+                  {isConditionActive(selectedCondition) ? 'Remove' : 'Toggle'}
+                </button>
+              </div>
             </div>
 
             <div className="button-grid">
@@ -511,23 +525,6 @@ function App() {
                 <h3>Action</h3>
                 <button onClick={() => applyHpChange('kill')} className="btn-danger">Kill</button>
                 <button onClick={() => applyHpChange('full')}>Full Heal</button>
-              </div>
-            </div>
-
-            <div className="conditions-panel">
-              <h3>Condition</h3>
-              <div className="condition-control">
-                <select className="cond-select" value={selectedCondition} onChange={e => setSelectedCondition(e.target.value)}>
-                  {conditions.map(cond => (
-                    <option key={cond} value={cond}>{cond}</option>
-                  ))}
-                </select>
-                <button onClick={() => toggleCondition(selectedCondition)} className="btn-small">
-                  {isConditionActive(selectedCondition) ? 'Remove' : 'Toggle'}
-                </button>
-              </div>
-              <div className="condition-active">
-                <strong>Active:</strong> {selectedCombatant?.status || 'None'}
               </div>
             </div>
 

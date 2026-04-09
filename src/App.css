@@ -238,6 +238,13 @@ button:active {
   gap: 10px;
 }
 
+.tracker-filters {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
 .button-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
