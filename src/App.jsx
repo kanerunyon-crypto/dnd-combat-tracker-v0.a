@@ -24,7 +24,6 @@ function App() {
   const [damageByType, setDamageByType] = useState({})
   const [searchQuery, setSearchQuery] = useState('')
   const [filterDeadOnly, setFilterDeadOnly] = useState(false)
-  const [hideDeadCombatants, setHideDeadCombatants] = useState(false)
 
   const damageTypes = ["Acid", "Bludgeoning", "Cold", "Fire", "Force", "Lightning",
     "Necrotic", "Piercing", "Poison", "Psychic", "Radiant", "Slashing", "Thunder"]
@@ -615,10 +614,6 @@ function App() {
               <div className="combatants-table">
                 <h2>Combatants</h2>
                 <div className="combatants-filter">
-                  <label>
-                    <input type="checkbox" checked={hideDeadCombatants} onChange={e => setHideDeadCombatants(e.target.checked)} />
-                    Hide Dead
-                  </label>
                   <button onClick={() => setSelectedCombatants([])} className="btn-small">Clear Multi-Select</button>
                 </div>
                 <table>
@@ -636,7 +631,7 @@ function App() {
                     </tr>
                   </thead>
                   <tbody>
-                    {combatants.filter(c => !hideDeadCombatants || c.curHp > 0).map((c) => {
+                    {combatants.map((c) => {
                       const rowIdx = combatants.indexOf(c)
                       return (
                       <tr key={c.id} className={`${selectedIdx === rowIdx ? 'selected' : ''} ${rowIdx === currentTurnIdx ? 'current' : ''} ${selectedCombatants.includes(c.id) ? 'multi-selected' : ''}`}>
