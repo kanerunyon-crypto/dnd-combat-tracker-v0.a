@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 
 function App() {
-  const [activeTab, setActiveTab] = useState('setup')
+  const [activeTab, setActiveTab] = useState('tracker')
   const [combatants, setCombatants] = useState([])
   const [tempCombatants, setTempCombatants] = useState([])
   const [currentTurnIdx, setCurrentTurnIdx] = useState(0)
@@ -421,12 +421,12 @@ function App() {
   }
 
   const resetCombat = () => {
-    if (confirm('Return to Setup and clear combat?')) {
+    if (confirm('Clear current combat?')) {
       setTimerRunning(false)
       setCombatants([])
       setActionHistory([])
       setTotalDamage(0)
-      setActiveTab('setup')
+      setActiveTab('tracker')
     }
   }
 
@@ -615,23 +615,20 @@ function App() {
       <h1>⚔️ D&D 5e Combat Tracker</h1>
 
       <div className="tabs">
-        <button className={`tab-btn ${activeTab === 'setup' ? 'active' : ''}`} onClick={() => setActiveTab('setup')}>Setup</button>
         <button className={`tab-btn ${activeTab === 'tracker' ? 'active' : ''}`} onClick={() => setActiveTab('tracker')}>Tracker</button>
         <button className={`tab-btn ${activeTab === 'summary' ? 'active' : ''}`} onClick={() => setActiveTab('summary')}>Summary</button>
         <button className={`tab-btn ${activeTab === 'stats' ? 'active' : ''}`} onClick={() => setActiveTab('stats')}>Stats</button>
         <button className={`tab-btn ${activeTab === 'presets' ? 'active' : ''}`} onClick={() => setActiveTab('presets')}>Presets</button>
       </div>
 
-      {/* Setup Tab */}
-      {activeTab === 'setup' && (
-        <div className="tab-content">
+      {/* Tracker Tab */}
+      {activeTab === 'tracker' && (
+        <div className="tab-content tracker-tab">
           <div className="section">
-            <h2>Initiative</h2>
+            <h2>Encounter Setup</h2>
             <input type="number" placeholder="Initiative (blank = 0)" value={newInitiative} onChange={e => setNewInitiative(e.target.value)} />
-          </div>
 
-          <div className="section">
-            <h2>Quick Add Presets</h2>
+            <h3>Quick Add Presets</h3>
             <div className="preset-buttons">
               {Object.entries(presets).map(([key, preset]) => (
                 <button key={key} onClick={() => addPresetCombatant(key)} className="preset-btn">
@@ -639,19 +636,15 @@ function App() {
                 </button>
               ))}
             </div>
-          </div>
 
-          <div className="section">
-            <h2>Manual Add</h2>
+            <h3>Manual Add</h3>
             <input placeholder="Name" value={newCombatant.name} onChange={e => setNewCombatant({...newCombatant, name: e.target.value})} />
             <input type="number" placeholder="Max HP" value={newCombatant.maxHp} onChange={e => setNewCombatant({...newCombatant, maxHp: parseInt(e.target.value) || 0})} />
             <input type="number" placeholder="Initiative" value={newCombatant.initiative} onChange={e => setNewCombatant({...newCombatant, initiative: parseInt(e.target.value) || 0})} />
             <label><input type="checkbox" checked={newCombatant.isPlayer} onChange={e => setNewCombatant({...newCombatant, isPlayer: e.target.checked})} /> Player</label>
             <button onClick={addManualCombatant}>Add Combatant</button>
-          </div>
 
-          <div className="section">
-            <h2>Combatants ({tempCombatants.length})</h2>
+            <h3>Queued Combatants ({tempCombatants.length})</h3>
             <div className="combatant-list">
               {tempCombatants.sort((a, b) => b.initiative - a.initiative).map((c, i) => (
                 <div key={i} className="combatant-item">
@@ -661,22 +654,19 @@ function App() {
                 </div>
               ))}
             </div>
+
+            <div className="button-group">
+              <button onClick={startCombat} className="btn-primary">Start Combat</button>
+            </div>
           </div>
 
-          <div className="button-group">
-            <button onClick={startCombat} className="btn-primary">Start Combat</button>
-          </div>
-        </div>
-      )}
+          {combatants.length > 0 && (
+            <>
+              <div className="stats-bar">
+                Elapsed: {formatTime(elapsedTime)} | Round {roundNum} | Current: {combatants[currentTurnIdx]?.name || '-'}
+              </div>
 
-      {/* Tracker Tab */}
-      {activeTab === 'tracker' && (
-        <div className="tab-content tracker-tab">
-          <div className="stats-bar">
-            Elapsed: {formatTime(elapsedTime)} | Round {roundNum} | Current: {combatants[currentTurnIdx]?.name || '-'}
-          </div>
-
-          <div className="tracker-layout">
+              <div className="tracker-layout">
             <div className="tracker-left">
               <div className="controls">
             <div className="tracker-add-panel">
@@ -879,6 +869,8 @@ function App() {
           </div>
         </div>
       </div>
+      </>
+      )}
       </div>
       )}
 
