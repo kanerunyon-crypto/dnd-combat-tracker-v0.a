@@ -59,6 +59,13 @@ function App() {
     }
   }, [presets, trackerPresetKey])
 
+  useEffect(() => {
+    if (!trackerPresetKey) {
+      const firstPresetKey = Object.keys(presets)[0]
+      if (firstPresetKey) setTrackerPresetKey(firstPresetKey)
+    }
+  }, [presets, trackerPresetKey])
+
   // Timer effect
   useEffect(() => {
     if (!timerRunning || !startTime) return
