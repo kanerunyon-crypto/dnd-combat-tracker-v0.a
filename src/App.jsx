@@ -624,43 +624,43 @@ function App() {
       {/* Tracker Tab */}
       {activeTab === 'tracker' && (
         <div className="tab-content tracker-tab">
-          <div className="section">
-            <h2>Encounter Setup</h2>
-            <input type="number" placeholder="Initiative (blank = 0)" value={newInitiative} onChange={e => setNewInitiative(e.target.value)} />
+          {combatants.length === 0 ? (
+            <div className="section">
+              <h2>Encounter Setup</h2>
+              <input type="number" placeholder="Initiative (blank = 0)" value={newInitiative} onChange={e => setNewInitiative(e.target.value)} />
 
-            <h3>Quick Add Presets</h3>
-            <div className="preset-buttons">
-              {Object.entries(presets).map(([key, preset]) => (
-                <button key={key} onClick={() => addPresetCombatant(key)} className="preset-btn">
-                  {preset.name} ({preset.maxHp} HP)
-                </button>
-              ))}
+              <h3>Quick Add Presets</h3>
+              <div className="preset-buttons">
+                {Object.entries(presets).map(([key, preset]) => (
+                  <button key={key} onClick={() => addPresetCombatant(key)} className="preset-btn">
+                    {preset.name} ({preset.maxHp} HP)
+                  </button>
+                ))}
+              </div>
+
+              <h3>Manual Add</h3>
+              <input placeholder="Name" value={newCombatant.name} onChange={e => setNewCombatant({...newCombatant, name: e.target.value})} />
+              <input type="number" placeholder="Max HP" value={newCombatant.maxHp} onChange={e => setNewCombatant({...newCombatant, maxHp: parseInt(e.target.value) || 0})} />
+              <input type="number" placeholder="Initiative" value={newCombatant.initiative} onChange={e => setNewCombatant({...newCombatant, initiative: parseInt(e.target.value) || 0})} />
+              <label><input type="checkbox" checked={newCombatant.isPlayer} onChange={e => setNewCombatant({...newCombatant, isPlayer: e.target.checked})} /> Player</label>
+              <button onClick={addManualCombatant}>Add Combatant</button>
+
+              <h3>Queued Combatants ({tempCombatants.length})</h3>
+              <div className="combatant-list">
+                {tempCombatants.sort((a, b) => b.initiative - a.initiative).map((c, i) => (
+                  <div key={i} className="combatant-item">
+                    <span>{c.name} | Init: {c.initiative} | HP: {c.maxHp}</span>
+                    <button onClick={() => cloneCombatant(tempCombatants.indexOf(c))}>Clone</button>
+                    <button onClick={() => removeFromSetup(tempCombatants.indexOf(c))}>Remove</button>
+                  </div>
+                ))}
+              </div>
+
+              <div className="button-group">
+                <button onClick={startCombat} className="btn-primary">Start Combat</button>
+              </div>
             </div>
-
-            <h3>Manual Add</h3>
-            <input placeholder="Name" value={newCombatant.name} onChange={e => setNewCombatant({...newCombatant, name: e.target.value})} />
-            <input type="number" placeholder="Max HP" value={newCombatant.maxHp} onChange={e => setNewCombatant({...newCombatant, maxHp: parseInt(e.target.value) || 0})} />
-            <input type="number" placeholder="Initiative" value={newCombatant.initiative} onChange={e => setNewCombatant({...newCombatant, initiative: parseInt(e.target.value) || 0})} />
-            <label><input type="checkbox" checked={newCombatant.isPlayer} onChange={e => setNewCombatant({...newCombatant, isPlayer: e.target.checked})} /> Player</label>
-            <button onClick={addManualCombatant}>Add Combatant</button>
-
-            <h3>Queued Combatants ({tempCombatants.length})</h3>
-            <div className="combatant-list">
-              {tempCombatants.sort((a, b) => b.initiative - a.initiative).map((c, i) => (
-                <div key={i} className="combatant-item">
-                  <span>{c.name} | Init: {c.initiative} | HP: {c.maxHp}</span>
-                  <button onClick={() => cloneCombatant(tempCombatants.indexOf(c))}>Clone</button>
-                  <button onClick={() => removeFromSetup(tempCombatants.indexOf(c))}>Remove</button>
-                </div>
-              ))}
-            </div>
-
-            <div className="button-group">
-              <button onClick={startCombat} className="btn-primary">Start Combat</button>
-            </div>
-          </div>
-
-          {combatants.length > 0 && (
+          ) : (
             <>
               <div className="stats-bar">
                 Elapsed: {formatTime(elapsedTime)} | Round {roundNum} | Current: {combatants[currentTurnIdx]?.name || '-'}
@@ -669,24 +669,26 @@ function App() {
               <div className="tracker-layout">
             <div className="tracker-left">
               <div className="controls">
-            <div className="tracker-add-panel">
-              <h3>Add To Combat</h3>
-              <div className="tracker-add-row">
-                <select value={trackerPresetKey} onChange={e => setTrackerPresetKey(e.target.value)}>
-                  {Object.entries(presets).map(([key, preset]) => (
-                    <option key={key} value={key}>{preset.name}</option>
-                  ))}
-                </select>
-                <input type="number" placeholder="Init" value={trackerInitiative} onChange={e => setTrackerInitiative(e.target.value)} />
-                <button onClick={addPresetCombatantToTracker}>Add Preset</button>
+            <div className="section">
+              <h2>Add To Combat</h2>
+              <input type="number" placeholder="Initiative (blank = 0)" value={newInitiative} onChange={e => setNewInitiative(e.target.value)} />
+
+              <h3>Quick Add Presets</h3>
+              <div className="preset-buttons">
+                {Object.entries(presets).map(([key, preset]) => (
+                  <button key={key} onClick={() => addPresetCombatant(key)} className="preset-btn">
+                    {preset.name} ({preset.maxHp} HP)
+                  </button>
+                ))}
               </div>
-              <div className="tracker-add-row tracker-add-manual">
-                <input placeholder="Name" value={trackerNewCombatant.name} onChange={e => setTrackerNewCombatant({ ...trackerNewCombatant, name: e.target.value })} />
-                <input type="number" placeholder="HP" value={trackerNewCombatant.maxHp} onChange={e => setTrackerNewCombatant({ ...trackerNewCombatant, maxHp: parseInt(e.target.value) || 0 })} />
-                <input type="number" placeholder="Init" value={trackerNewCombatant.initiative} onChange={e => setTrackerNewCombatant({ ...trackerNewCombatant, initiative: parseInt(e.target.value) || 0 })} />
-                <label><input type="checkbox" checked={trackerNewCombatant.isPlayer} onChange={e => setTrackerNewCombatant({ ...trackerNewCombatant, isPlayer: e.target.checked })} /> Player</label>
-                <button onClick={addManualCombatantToTracker}>Add Manual</button>
-              </div>
+
+              <h3>Manual Add</h3>
+              <input placeholder="Name" value={trackerNewCombatant.name} onChange={e => setTrackerNewCombatant({ ...trackerNewCombatant, name: e.target.value })} />
+              <input type="number" placeholder="Max HP" value={trackerNewCombatant.maxHp} onChange={e => setTrackerNewCombatant({ ...trackerNewCombatant, maxHp: parseInt(e.target.value) || 0 })} />
+              <input type="number" placeholder="Initiative" value={trackerNewCombatant.initiative} onChange={e => setTrackerNewCombatant({ ...trackerNewCombatant, initiative: parseInt(e.target.value) || 0 })} />
+              <label><input type="checkbox" checked={trackerNewCombatant.isPlayer} onChange={e => setTrackerNewCombatant({ ...trackerNewCombatant, isPlayer: e.target.checked })} /> Player</label>
+              <button onClick={addPresetCombatantToTracker}>Add Preset</button>
+              <button onClick={addManualCombatantToTracker}>Add Manual</button>
             </div>
 
             <div className="tracker-filters">
@@ -869,8 +871,8 @@ function App() {
           </div>
         </div>
       </div>
-      </>
-      )}
+            </>
+          )}
       </div>
       )}
 
