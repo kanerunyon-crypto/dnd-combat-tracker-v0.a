@@ -357,7 +357,7 @@ button:hover {
   grid-column: 3;
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(260px, 0.8fr);
+  grid-template-columns: minmax(0, 3.25fr) minmax(260px, 0.8fr);
   gap: 10px;
 }
 
