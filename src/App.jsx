@@ -24,7 +24,9 @@ function App() {
   const [damageByType, setDamageByType] = useState({})
   const [searchQuery, setSearchQuery] = useState('')
   const [filterDeadOnly, setFilterDeadOnly] = useState(false)
-  const [hideDeadCombatants, setHideDeadCombatants] = useState(false)
+  const [trackerPresetKey, setTrackerPresetKey] = useState('')
+  const [trackerInitiative, setTrackerInitiative] = useState('')
+  const [trackerNewCombatant, setTrackerNewCombatant] = useState({ name: '', initiative: 0, maxHp: 0, isPlayer: true })
 
   const damageTypes = ["Acid", "Bludgeoning", "Cold", "Fire", "Force", "Lightning",
     "Necrotic", "Piercing", "Poison", "Psychic", "Radiant", "Slashing", "Thunder"]
@@ -49,6 +51,13 @@ function App() {
       setPresets(getDefaultPresets())
     }
   }, [])
+
+  useEffect(() => {
+    if (!trackerPresetKey) {
+      const firstPresetKey = Object.keys(presets)[0]
+      if (firstPresetKey) setTrackerPresetKey(firstPresetKey)
+    }
+  }, [presets, trackerPresetKey])
 
   // Timer effect
   useEffect(() => {
@@ -97,11 +106,33 @@ function App() {
     return { sorted, newCurrentIdx, newSelectedIdx }
   }
 
+  const syncActiveCombatants = (list, preserveCurrentId, preserveSelectedId) => {
+    const activeCombatants = list.filter(combatant => combatant.curHp > 0)
+
+    if (activeCombatants.length === 0) {
+      setCombatants([])
+      setCurrentTurnIdx(0)
+      setCurrentTurnId(null)
+      setSelectedIdx(null)
+      setSelectedCombatants([])
+      return []
+    }
+
+    const { sorted, newCurrentIdx, newSelectedIdx } = sortCombatants(activeCombatants, preserveCurrentId, preserveSelectedId)
+    setCombatants(sorted)
+    setCurrentTurnIdx(newCurrentIdx)
+    setCurrentTurnId(sorted[newCurrentIdx]?.id || null)
+    setSelectedIdx(newSelectedIdx)
+    setSelectedCombatants(prev => prev.filter(id => sorted.some(combatant => combatant.id === id)))
+    return sorted
+  }
+
   const addPresetCombatant = (presetKey) => {
     const preset = presets[presetKey]
     if (!preset) return
     const initiative = newInitiative ? parseInt(newInitiative) : 0
     setTempCombatants([...tempCombatants, {
+      id: generateId(),
       key: presetKey,
       name: preset.name,
       isPlayer: preset.isPlayer,
@@ -139,6 +170,71 @@ function App() {
     setNewCombatant({ name: '', initiative: 0, maxHp: 0, isPlayer: true })
   }
 
+  const addPresetCombatantToTracker = () => {
+    const preset = presets[trackerPresetKey]
+    if (!preset) return
+
+    const initiative = trackerInitiative ? parseInt(trackerInitiative) : 0
+    const combatant = {
+      id: generateId(),
+      key: trackerPresetKey,
+      name: preset.name,
+      isPlayer: preset.isPlayer,
+      maxHp: preset.maxHp,
+      curHp: preset.maxHp,
+      tempHp: 0,
+      initiative,
+      ac: preset.ac,
+      speed: preset.speed,
+      status: '',
+      statblock: preset.statblock || ''
+    }
+
+    const c = [...combatants, combatant]
+    const preserveCurrentId = currentTurnId || c[currentTurnIdx]?.id || combatant.id
+    const preserveSelectedId = combatant.id
+    const { sorted, newCurrentIdx, newSelectedIdx } = sortCombatants(c, preserveCurrentId, preserveSelectedId)
+    setCombatants(sorted)
+    setCurrentTurnIdx(newCurrentIdx)
+    setCurrentTurnId(sorted[newCurrentIdx]?.id || null)
+    setSelectedIdx(newSelectedIdx)
+    setTrackerInitiative('')
+    setActionHistory([...actionHistory, `R${roundNum} | Added ${combatant.name} to initiative (${combatant.initiative})`])
+  }
+
+  const addManualCombatantToTracker = () => {
+    if (!trackerNewCombatant.name || trackerNewCombatant.maxHp <= 0) {
+      alert('Name and positive HP required')
+      return
+    }
+
+    const combatant = {
+      id: generateId(),
+      key: null,
+      name: trackerNewCombatant.name,
+      isPlayer: trackerNewCombatant.isPlayer,
+      maxHp: trackerNewCombatant.maxHp,
+      curHp: trackerNewCombatant.maxHp,
+      tempHp: 0,
+      initiative: parseInt(trackerNewCombatant.initiative) || 0,
+      ac: '',
+      speed: '',
+      status: '',
+      statblock: ''
+    }
+
+    const c = [...combatants, combatant]
+    const preserveCurrentId = currentTurnId || c[currentTurnIdx]?.id || combatant.id
+    const preserveSelectedId = combatant.id
+    const { sorted, newCurrentIdx, newSelectedIdx } = sortCombatants(c, preserveCurrentId, preserveSelectedId)
+    setCombatants(sorted)
+    setCurrentTurnIdx(newCurrentIdx)
+    setCurrentTurnId(sorted[newCurrentIdx]?.id || null)
+    setSelectedIdx(newSelectedIdx)
+    setTrackerNewCombatant({ name: '', initiative: 0, maxHp: 0, isPlayer: true })
+    setActionHistory([...actionHistory, `R${roundNum} | Added ${combatant.name} to initiative (${combatant.initiative})`])
+  }
+
   const removeFromSetup = (idx) => {
     setTempCombatants(tempCombatants.filter((_, i) => i !== idx))
   }
@@ -163,6 +259,16 @@ function App() {
   }
 
   const applyHpChange = (amount) => {
+    if (typeof amount === 'number' && selectedCombatants.length > 0) {
+      applyDamageToMultiple(amount)
+      return
+    }
+
+    if ((amount === 'kill' || amount === 'full') && selectedCombatants.length > 0) {
+      applyActionToMultiple(amount)
+      return
+    }
+
     if (selectedIdx === null) {
       alert('Select a combatant first')
       return
@@ -170,6 +276,7 @@ function App() {
     const c = [...combatants]
     const target = c[selectedIdx]
     const actor = c[currentTurnIdx].name
+    const preserveCurrentId = c[currentTurnIdx]?.id || null
     let entry = ''
 
     if (amount === 'kill') {
@@ -201,11 +308,26 @@ function App() {
       setTotalDamage(prev => prev + damage)
     }
 
-    setCombatants(c)
+    const preserveSelectedId = target.curHp > 0 ? target.id : preserveCurrentId
+    syncActiveCombatants(c, preserveCurrentId, preserveSelectedId)
     setActionHistory([...actionHistory, entry])
   }
 
   const applyTempHp = (amount) => {
+    if (selectedCombatants.length > 0) {
+      const c = [...combatants]
+      const actor = c[currentTurnIdx]?.name || 'Unknown'
+      selectedCombatants.forEach(targetId => {
+        const idx = c.findIndex(item => item.id === targetId)
+        if (idx === -1) return
+        c[idx].tempHp += amount
+      })
+      const entry = `R${roundNum} | ${actor} → ${selectedCombatants.length} targets | added ${amount} temp HP`
+      setCombatants(c)
+      setActionHistory([...actionHistory, entry])
+      return
+    }
+
     if (selectedIdx === null) {
       alert('Select a combatant first')
       return
@@ -243,10 +365,41 @@ function App() {
     setActionHistory([...actionHistory, entry])
   }
 
+  const applyConditionToSelected = (condition) => {
+    setSelectedCondition(condition)
+    if (selectedIdx === null) return
+    const c = [...combatants]
+    const target = c[selectedIdx]
+    if (!target) return
+    const statuses = (target.status || '').split(',').map(s => s.trim()).filter(s => s)
+    if (statuses.includes(condition)) return
+    statuses.push(condition)
+    target.status = statuses.join(', ')
+    const actor = c[currentTurnIdx]?.name || 'Unknown'
+    const entry = `R${roundNum} | ${actor} → ${target.name} | applied ${condition}`
+    setCombatants(c)
+    setActionHistory([...actionHistory, entry])
+  }
+
+  const removeConditionFromCombatant = (combatantIdx, condition) => {
+    const c = [...combatants]
+    const target = c[combatantIdx]
+    if (!target) return
+    const statuses = (target.status || '').split(',').map(s => s.trim()).filter(s => s)
+    if (!statuses.includes(condition)) return
+    target.status = statuses.filter(s => s !== condition).join(', ')
+    const actor = c[currentTurnIdx]?.name || 'Unknown'
+    const entry = `R${roundNum} | ${actor} → ${target.name} | removed ${condition}`
+    setCombatants(c)
+    setActionHistory([...actionHistory, entry])
+  }
+
   const nextTurn = () => {
+    if (combatants.length === 0) return
     const nextIdx = (currentTurnIdx + 1) % combatants.length
     if (nextIdx === 0) setRoundNum(prev => prev + 1)
     setCurrentTurnIdx(nextIdx)
+    setCurrentTurnId(combatants[nextIdx]?.id || null)
     setSelectedIdx(nextIdx)
   }
 
@@ -306,9 +459,11 @@ function App() {
     setTempCombatants([...tempCombatants, clone])
   }
 
-  const toggleMultiSelect = (idx) => {
-    setSelectedCombatants(prev => 
-      prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]
+  const toggleMultiSelect = (combatantId) => {
+    setSelectedCombatants(prev =>
+      prev.includes(combatantId)
+        ? prev.filter(id => id !== combatantId)
+        : [...prev, combatantId]
     )
   }
 
@@ -336,6 +491,9 @@ function App() {
     }
     const c = [...combatants]
     const actor = c[currentTurnIdx]?.name || 'Unknown'
+    const preserveCurrentId = c[currentTurnIdx]?.id || null
+    const preserveSelectedId = c[selectedIdx]?.curHp > 0 ? c[selectedIdx]?.id || null : preserveCurrentId
+    let totalAoEDamage = 0
     selectedCombatants.forEach(targetId => {
       const idx = c.findIndex(item => item.id === targetId)
       if (idx === -1) return
@@ -352,12 +510,47 @@ function App() {
         } else {
           target.curHp = Math.max(0, target.curHp - damage)
         }
-        setTotalDamage(prev => prev + damage)
+        totalAoEDamage += damage
       }
     })
+    if (totalAoEDamage > 0) {
+      setTotalDamage(prev => prev + totalAoEDamage)
+    }
     const action = amount > 0 ? 'healing' : 'damage'
     const entry = `R${roundNum} | ${actor} → ${selectedCombatants.length} targets | ${Math.abs(amount)} ${action}`
-    setCombatants(c)
+    syncActiveCombatants(c, preserveCurrentId, preserveSelectedId)
+    setActionHistory([...actionHistory, entry])
+  }
+
+  const applyActionToMultiple = (actionType) => {
+    if (selectedCombatants.length === 0) {
+      alert('Select combatants first')
+      return
+    }
+
+    const c = [...combatants]
+    const actor = c[currentTurnIdx]?.name || 'Unknown'
+    const preserveCurrentId = c[currentTurnIdx]?.id || null
+
+    selectedCombatants.forEach(targetId => {
+      const idx = c.findIndex(item => item.id === targetId)
+      if (idx === -1) return
+      const target = c[idx]
+      if (actionType === 'kill') {
+        target.curHp = 0
+        target.tempHp = 0
+      } else if (actionType === 'full') {
+        target.curHp = target.maxHp
+      }
+    })
+
+    const preserveSelectedId = actionType === 'kill'
+      ? preserveCurrentId
+      : (c[selectedIdx]?.id || preserveCurrentId)
+
+    const label = actionType === 'kill' ? 'KILLED' : 'Full Heal'
+    const entry = `R${roundNum} | ${actor} → ${selectedCombatants.length} targets | ${label}`
+    syncActiveCombatants(c, preserveCurrentId, preserveSelectedId)
     setActionHistory([...actionHistory, entry])
   }
 
@@ -385,11 +578,6 @@ function App() {
   }
 
   const selectedCombatant = selectedIdx !== null ? combatants[selectedIdx] : null
-
-  const isConditionActive = (condition) => {
-    if (!selectedCombatant) return false
-    return (selectedCombatant.status || '').split(',').map(s => s.trim()).includes(condition)
-  }
 
   const buildVersion = import.meta.env.VITE_BUILD_VERSION || '0.0.0'
   const buildCommit = (import.meta.env.VITE_BUILD_COMMIT || 'local').slice(0, 7)
@@ -484,6 +672,26 @@ function App() {
           <div className="tracker-layout">
             <div className="tracker-left">
               <div className="controls">
+            <div className="tracker-add-panel">
+              <h3>Add To Combat</h3>
+              <div className="tracker-add-row">
+                <select value={trackerPresetKey} onChange={e => setTrackerPresetKey(e.target.value)}>
+                  {Object.entries(presets).map(([key, preset]) => (
+                    <option key={key} value={key}>{preset.name}</option>
+                  ))}
+                </select>
+                <input type="number" placeholder="Init" value={trackerInitiative} onChange={e => setTrackerInitiative(e.target.value)} />
+                <button onClick={addPresetCombatantToTracker}>Add Preset</button>
+              </div>
+              <div className="tracker-add-row tracker-add-manual">
+                <input placeholder="Name" value={trackerNewCombatant.name} onChange={e => setTrackerNewCombatant({ ...trackerNewCombatant, name: e.target.value })} />
+                <input type="number" placeholder="HP" value={trackerNewCombatant.maxHp} onChange={e => setTrackerNewCombatant({ ...trackerNewCombatant, maxHp: parseInt(e.target.value) || 0 })} />
+                <input type="number" placeholder="Init" value={trackerNewCombatant.initiative} onChange={e => setTrackerNewCombatant({ ...trackerNewCombatant, initiative: parseInt(e.target.value) || 0 })} />
+                <label><input type="checkbox" checked={trackerNewCombatant.isPlayer} onChange={e => setTrackerNewCombatant({ ...trackerNewCombatant, isPlayer: e.target.checked })} /> Player</label>
+                <button onClick={addManualCombatantToTracker}>Add Manual</button>
+              </div>
+            </div>
+
             <div className="tracker-filters">
               <div className="damage-type">
                 <label>Damage Type:</label>
@@ -494,14 +702,11 @@ function App() {
 
               <div className="damage-type">
                 <label>Condition:</label>
-                <select value={selectedCondition} onChange={e => setSelectedCondition(e.target.value)}>
+                <select value={selectedCondition} onChange={e => applyConditionToSelected(e.target.value)}>
                   {conditions.map(cond => (
                     <option key={cond} value={cond}>{cond}</option>
                   ))}
                 </select>
-                <button onClick={() => toggleCondition(selectedCondition)} className="btn-small">
-                  {isConditionActive(selectedCondition) ? 'Remove' : 'Toggle'}
-                </button>
               </div>
             </div>
 
@@ -536,81 +741,112 @@ function App() {
 
             <div className="multi-select-panel">
               <h3>Multi-Select ({selectedCombatants.length})</h3>
-              <div className="button-section">
-                {[1, 5, 10, 25].map(val => (
-                  <button key={`multi-dmg${val}`} onClick={() => applyDamageToMultiple(-val)}>AoE -{val}</button>
-                ))}
-              </div>
-              <div className="button-section">
-                {[1, 5, 10, 25].map(val => (
-                  <button key={`multi-heal${val}`} onClick={() => applyDamageToMultiple(val)}>AoE +{val}</button>
-                ))}
+              <div className="aoe-grid">
+                <div className="button-section">
+                  <h3>AoE Damage</h3>
+                  <div className="aoe-buttons">
+                    {[1, 5, 10, 25].map(val => (
+                      <button key={`multi-dmg${val}`} className="aoe-btn" onClick={() => applyDamageToMultiple(-val)}>-{val}</button>
+                    ))}
+                  </div>
+                </div>
+                <div className="button-section">
+                  <h3>AoE Healing</h3>
+                  <div className="aoe-buttons">
+                    {[1, 5, 10, 25].map(val => (
+                      <button key={`multi-heal${val}`} className="aoe-btn" onClick={() => applyDamageToMultiple(val)}>+{val}</button>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="combatants-table">
-            <h2>Combatants</h2>
-            <div className="combatants-filter">
-              <label>
-                <input type="checkbox" checked={hideDeadCombatants} onChange={e => setHideDeadCombatants(e.target.checked)} />
-                Hide Dead
-              </label>
-              <button onClick={() => setSelectedCombatants([])} className="btn-small">Clear Multi-Select</button>
+            <div className="tracker-middle">
+              <div className="combatants-table">
+                <h2>Combatants</h2>
+                <div className="combatants-filter">
+                  <button onClick={() => setSelectedCombatants([])} className="btn-small">Clear Multi-Select</button>
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Turn</th>
+                      <th>📋</th>
+                      <th>Name</th>
+                      <th>AC</th>
+                      <th>Health</th>
+                      <th>Temp</th>
+                      <th>Init</th>
+                      <th>Speed</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {combatants.map((c) => {
+                      const rowIdx = combatants.indexOf(c)
+                      return (
+                      <tr key={c.id} className={`${selectedIdx === rowIdx ? 'selected' : ''} ${rowIdx === currentTurnIdx ? 'current' : ''} ${selectedCombatants.includes(c.id) ? 'multi-selected' : ''}`}>
+                        <td onClick={() => setSelectedIdx(rowIdx)}>{rowIdx === currentTurnIdx ? '→' : ''}</td>
+                        <td className="checkbox-cell">
+                          <input
+                            type="checkbox"
+                            checked={selectedCombatants.includes(c.id)}
+                            onChange={(e) => {
+                              e.stopPropagation()
+                              toggleMultiSelect(c.id)
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        </td>
+                        <td onClick={() => setSelectedIdx(rowIdx)}>{c.name}</td>
+                        <td>{c.ac || '-'}</td>
+                        <td>
+                          <div className="hp-bar">
+                            <div className="hp-fill" style={{width: `${(c.curHp / c.maxHp) * 100}%`}}></div>
+                            <span className="hp-text">{c.curHp}/{c.maxHp}</span>
+                          </div>
+                        </td>
+                        <td>{c.tempHp > 0 ? `${c.tempHp}t` : '—'}</td>
+                        <td>
+                          <input
+                            type="number"
+                            className="init-input"
+                            value={c.initiative}
+                              onChange={(e) => updateInitiative(rowIdx, e.target.value)}
+                          />
+                        </td>
+                        <td>{c.speed || '—'}</td>
+                        <td>
+                          {c.status ? (
+                            <div className="status-cell" onClick={(e) => e.stopPropagation()}>
+                              {(c.status || '').split(',').map(s => s.trim()).filter(Boolean).map(status => (
+                                <button
+                                  key={`${c.id}-${status}`}
+                                  className="status-chip"
+                                  onClick={() => removeConditionFromCombatant(rowIdx, status)}
+                                  title={`Remove ${status}`}
+                                >
+                                  {status} ×
+                                </button>
+                              ))}
+                            </div>
+                          ) : '—'}
+                        </td>
+                      </tr>
+                    )})}
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <table>
-              <thead>
-                <tr>
-                  <th>Turn</th>
-                  <th>📋</th>
-                  <th>Name</th>
-                  <th>AC</th>
-                  <th>Health</th>
-                  <th>Temp</th>
-                  <th>Init</th>
-                  <th>Speed</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {combatants.filter(c => !hideDeadCombatants || c.curHp > 0).map((c, i) => (
-                  <tr key={i} className={`${selectedIdx === combatants.indexOf(c) ? 'selected' : ''} ${i === currentTurnIdx ? 'current' : ''} ${selectedCombatants.includes(i) ? 'multi-selected' : ''}`}>
-                    <td onClick={() => setSelectedIdx(i)}>{i === currentTurnIdx ? '→' : ''}</td>
-                    <td onClick={(e) => { e.stopPropagation(); toggleMultiSelect(i); }}>
-                      <input type="checkbox" checked={selectedCombatants.includes(i)} onChange={() => {}} onClick={(e) => e.stopPropagation()} />
-                    </td>
-                    <td onClick={() => setSelectedIdx(i)}>{c.name}</td>
-                    <td>{c.ac || '-'}</td>
-                    <td>
-                      <div className="hp-bar">
-                        <div className="hp-fill" style={{width: `${(c.curHp / c.maxHp) * 100}%`}}></div>
-                        <span className="hp-text">{c.curHp}/{c.maxHp}</span>
-                      </div>
-                    </td>
-                    <td>{c.tempHp > 0 ? `${c.tempHp}t` : '—'}</td>
-                    <td>
-                      <input
-                        type="number"
-                        className="init-input"
-                        value={c.initiative}
-                          onChange={(e) => updateInitiative(i, e.target.value)}
-                      />
-                    </td>
-                    <td>{c.speed || '—'}</td>
-                    <td>{c.status || '—'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
 
-          <div className="button-group tracker-actions">
-            <button onClick={nextTurn} className="btn-primary">Next Turn</button>
-            <button onClick={undoLast}>Undo Last</button>
-            <button onClick={stopCombat}>Stop Combat</button>
-            <button onClick={resetCombat}>Reset</button>
-          </div>
-        </div>
+              <div className="button-group tracker-actions">
+                <button onClick={nextTurn} className="btn-primary">Next Turn</button>
+                <button onClick={undoLast}>Undo Last</button>
+                <button onClick={stopCombat}>Stop Combat</button>
+                <button onClick={resetCombat}>Reset</button>
+              </div>
+            </div>
 
         <div className="tracker-right">
           <div className="selected-panel">
