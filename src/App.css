@@ -191,6 +191,10 @@ button {
   padding: 5px 9px;
   font-size: 0.75rem;
   cursor: pointer;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-height: 1.15;
 }
 
 button:hover {
@@ -222,11 +226,12 @@ button:hover {
 }
 
 .preset-buttons select {
-  min-width: 260px;
+  min-width: 220px;
+  max-width: 100%;
 }
 
 .preset-btn {
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .combatant-list {
@@ -241,13 +246,20 @@ button:hover {
 .combatant-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
   gap: 6px;
   background: rgba(0, 0, 0, 0.15);
   border-left: 3px solid var(--gold-soft);
   border-radius: 6px;
   padding: 5px 6px;
   font-size: 0.75rem;
+}
+
+.combatant-item span {
+  flex: 1 1 180px;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .tracker-tab {
@@ -377,6 +389,9 @@ td {
   font-size: 0.72rem;
   padding: 4px 6px;
   border-bottom: 1px solid rgba(201, 162, 78, 0.14);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  vertical-align: top;
 }
 
 th {
@@ -467,6 +482,7 @@ tr.multi-selected {
 .selected-row {
   font-size: 0.76rem;
   margin-bottom: 3px;
+  overflow-wrap: anywhere;
 }
 
 .statblock {
@@ -517,6 +533,7 @@ tr.multi-selected {
   width: 100%;
   text-align: left;
   margin-bottom: 0;
+  overflow-wrap: anywhere;
 }
 
 .preset-item.selected {
