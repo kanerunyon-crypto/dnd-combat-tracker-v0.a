@@ -291,17 +291,17 @@ button:hover {
 .tracker-left {
   min-height: 0;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  gap: 8px;
+  grid-template-rows: auto auto;
+  gap: 6px;
 }
 
 .controls {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  overflow: auto;
-  padding-right: 2px;
+  gap: 6px;
+  overflow: visible;
+  padding-right: 0;
 }
 
 .tracker-filters {
@@ -316,22 +316,25 @@ button:hover {
 
 .button-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
 }
 
 .button-section {
-  padding: 6px;
+  padding: 4px;
 }
 
 .button-section h3 {
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   text-align: center;
+  font-size: 0.7rem;
 }
 
 .button-section button {
   width: 100%;
-  margin-bottom: 3px;
+  margin-bottom: 2px;
+  padding: 4px 5px;
+  font-size: 0.68rem;
 }
 
 .aoe-grid {
