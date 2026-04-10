@@ -507,17 +507,26 @@ tr.multi-selected {
   min-height: 0;
   overflow: auto;
   padding: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  align-content: start;
 }
 
 .preset-item {
   width: 100%;
   text-align: left;
-  margin-bottom: 4px;
+  margin-bottom: 0;
 }
 
 .preset-item.selected {
   border-color: var(--gold);
   background: rgba(201, 162, 78, 0.2);
+}
+
+.preset-list h3,
+.preset-list > .btn-primary {
+  grid-column: 1 / -1;
 }
 
 .preset-editor {
@@ -553,5 +562,9 @@ tr.multi-selected {
   .shortcuts-info {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .preset-list {
+    grid-template-columns: 1fr;
   }
 }
