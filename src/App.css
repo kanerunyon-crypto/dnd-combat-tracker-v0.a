@@ -64,6 +64,13 @@ h1 {
   text-shadow: 0 0 18px rgba(201, 162, 78, 0.22);
 }
 
+.title-version {
+  font-size: 0.68em;
+  color: var(--ink-dim);
+  font-weight: 500;
+  margin-left: 6px;
+}
+
 h2 {
   color: var(--ink);
   font-size: 0.98rem;

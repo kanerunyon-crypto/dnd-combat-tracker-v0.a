@@ -613,7 +613,7 @@ function App() {
 
   return (
     <div className="app">
-      <h1>⚔️ D&D 5e Combat Tracker</h1>
+      <h1>⚔️ D&D 5e Combat Tracker <span className="title-version">v{buildVersion}</span></h1>
 
       <div className="tabs">
         <button className={`tab-btn ${activeTab === 'tracker' ? 'active' : ''}`} onClick={() => setActiveTab('tracker')}>Tracker</button>
@@ -876,8 +876,8 @@ function App() {
       </div>
       )}
 
-      {/* Summary Tab */}
-      {activeTab === 'summary' && (
+      {/* Presets Tab */}
+      {activeTab === 'presets' && (
         <div className="tab-content">
           <div className="presets-container">
             <div className="preset-list">
