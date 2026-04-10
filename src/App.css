@@ -249,6 +249,38 @@ button:active {
   margin-bottom: 20px;
 }
 
+.tracker-add-panel {
+  background-color: #2d2d2d;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #444;
+}
+
+.tracker-add-panel h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.tracker-add-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) 90px auto;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.tracker-add-manual {
+  grid-template-columns: minmax(0, 1.4fr) 80px 80px auto auto;
+  margin-bottom: 0;
+}
+
+.tracker-add-row input,
+.tracker-add-row select,
+.tracker-add-row button {
+  margin: 0;
+  width: 100%;
+}
+
 .damage-type {
   display: flex;
   align-items: center;
@@ -860,6 +892,11 @@ tr.multi-selected {
   }
 
   .aoe-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tracker-add-row,
+  .tracker-add-manual {
     grid-template-columns: 1fr;
   }
 

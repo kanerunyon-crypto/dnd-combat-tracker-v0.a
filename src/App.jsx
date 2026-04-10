@@ -597,6 +597,26 @@ function App() {
           <div className="tracker-layout">
             <div className="tracker-left">
               <div className="controls">
+            <div className="tracker-add-panel">
+              <h3>Add To Combat</h3>
+              <div className="tracker-add-row">
+                <select value={trackerPresetKey} onChange={e => setTrackerPresetKey(e.target.value)}>
+                  {Object.entries(presets).map(([key, preset]) => (
+                    <option key={key} value={key}>{preset.name}</option>
+                  ))}
+                </select>
+                <input type="number" placeholder="Init" value={trackerInitiative} onChange={e => setTrackerInitiative(e.target.value)} />
+                <button onClick={addPresetCombatantToTracker}>Add Preset</button>
+              </div>
+              <div className="tracker-add-row tracker-add-manual">
+                <input placeholder="Name" value={trackerNewCombatant.name} onChange={e => setTrackerNewCombatant({ ...trackerNewCombatant, name: e.target.value })} />
+                <input type="number" placeholder="HP" value={trackerNewCombatant.maxHp} onChange={e => setTrackerNewCombatant({ ...trackerNewCombatant, maxHp: parseInt(e.target.value) || 0 })} />
+                <input type="number" placeholder="Init" value={trackerNewCombatant.initiative} onChange={e => setTrackerNewCombatant({ ...trackerNewCombatant, initiative: parseInt(e.target.value) || 0 })} />
+                <label><input type="checkbox" checked={trackerNewCombatant.isPlayer} onChange={e => setTrackerNewCombatant({ ...trackerNewCombatant, isPlayer: e.target.checked })} /> Player</label>
+                <button onClick={addManualCombatantToTracker}>Add Manual</button>
+              </div>
+            </div>
+
             <div className="tracker-filters">
               <div className="damage-type">
                 <label>Damage Type:</label>
