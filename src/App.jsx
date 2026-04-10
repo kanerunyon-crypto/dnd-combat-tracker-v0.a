@@ -616,8 +616,6 @@ function App() {
 
       <div className="tabs">
         <button className={`tab-btn ${activeTab === 'tracker' ? 'active' : ''}`} onClick={() => setActiveTab('tracker')}>Tracker</button>
-        <button className={`tab-btn ${activeTab === 'summary' ? 'active' : ''}`} onClick={() => setActiveTab('summary')}>Summary</button>
-        <button className={`tab-btn ${activeTab === 'stats' ? 'active' : ''}`} onClick={() => setActiveTab('stats')}>Stats</button>
         <button className={`tab-btn ${activeTab === 'presets' ? 'active' : ''}`} onClick={() => setActiveTab('presets')}>Presets</button>
       </div>
 
@@ -878,69 +876,6 @@ function App() {
 
       {/* Summary Tab */}
       {activeTab === 'summary' && (
-        <div className="tab-content">
-          <h2>Total Damage Dealt: <span className="damage-total">{totalDamage}</span></h2>
-          <div className="action-log">
-            <h3>Action History</h3>
-            {actionHistory.length === 0 ? <p>No actions yet</p> : (
-              actionHistory.map((entry, i) => <div key={i} className="log-entry">{entry}</div>)
-            )}
-          </div>
-          <div className="button-group">
-            <button onClick={exportSession} className="btn-primary">📥 Export Session</button>
-          </div>
-        </div>
-      )}
-
-      {/* Stats Tab */}
-      {activeTab === 'stats' && (
-        <div className="tab-content">
-          <h2>Combat Statistics</h2>
-          
-          <div className="stats-section">
-            <h3>Damage Ranking</h3>
-            <table className="stats-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Health</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {combatants.sort((a, b) => {
-                  const aDamage = a.maxHp - a.curHp
-                  const bDamage = b.maxHp - b.curHp
-                  return bDamage - aDamage
-                }).map((c, i) => {
-                  const damage = c.maxHp - c.curHp
-                  const percent = Math.round((damage / c.maxHp) * 100)
-                  return (
-                    <tr key={i}>
-                      <td>{c.name}</td>
-                      <td>
-                        <div className="hp-bar">
-                          <div className="hp-fill" style={{width: `${(c.curHp / c.maxHp) * 100}%`}}></div>
-                          <span className="hp-text">{c.curHp}/{c.maxHp}</span>
-                        </div>
-                      </td>
-                      <td>{c.curHp <= 0 ? '💀 Dead' : `${damage} dmg (${percent}%)`}</td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="stats-section">
-            <h3>Rounds Completed</h3>
-            <p className="stat-value">{roundNum - 1}</p>
-          </div>
-        </div>
-      )}
-
-      {/* Presets Tab */}
-      {activeTab === 'presets' && (
         <div className="tab-content">
           <div className="presets-container">
             <div className="preset-list">
