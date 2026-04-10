@@ -760,6 +760,13 @@ function App() {
                 </div>
               </div>
             </div>
+
+            <div className="button-group tracker-actions">
+              <button onClick={nextTurn} className="btn-primary">Next Turn</button>
+              <button onClick={undoLast}>Undo Last</button>
+              <button onClick={stopCombat}>Stop Combat</button>
+              <button onClick={resetCombat}>Reset</button>
+            </div>
           </div>
 
             <div className="tracker-middle">
@@ -861,13 +868,6 @@ function App() {
                   )}
                 </div>
               </div>
-            </div>
-
-            <div className="button-group tracker-actions">
-              <button onClick={nextTurn} className="btn-primary">Next Turn</button>
-              <button onClick={undoLast}>Undo Last</button>
-              <button onClick={stopCombat}>Stop Combat</button>
-              <button onClick={resetCombat}>Reset</button>
             </div>
           </div>
       </div>
