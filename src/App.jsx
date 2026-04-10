@@ -768,6 +768,7 @@ function App() {
               <button onClick={resetCombat}>Reset</button>
             </div>
           </div>
+          </div>
 
             <div className="tracker-middle">
               <div className="combatants-table">
@@ -869,7 +870,6 @@ function App() {
                 </div>
               </div>
             </div>
-          </div>
       </div>
             </>
           )}
