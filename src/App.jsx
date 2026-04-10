@@ -24,6 +24,9 @@ function App() {
   const [damageByType, setDamageByType] = useState({})
   const [searchQuery, setSearchQuery] = useState('')
   const [filterDeadOnly, setFilterDeadOnly] = useState(false)
+  const [trackerPresetKey, setTrackerPresetKey] = useState('')
+  const [trackerInitiative, setTrackerInitiative] = useState('')
+  const [trackerNewCombatant, setTrackerNewCombatant] = useState({ name: '', initiative: 0, maxHp: 0, isPlayer: true })
 
   const damageTypes = ["Acid", "Bludgeoning", "Cold", "Fire", "Force", "Lightning",
     "Necrotic", "Piercing", "Poison", "Psychic", "Radiant", "Slashing", "Thunder"]
@@ -48,6 +51,13 @@ function App() {
       setPresets(getDefaultPresets())
     }
   }, [])
+
+  useEffect(() => {
+    if (!trackerPresetKey) {
+      const firstPresetKey = Object.keys(presets)[0]
+      if (firstPresetKey) setTrackerPresetKey(firstPresetKey)
+    }
+  }, [presets, trackerPresetKey])
 
   // Timer effect
   useEffect(() => {
@@ -158,6 +168,71 @@ function App() {
       statblock: ''
     }])
     setNewCombatant({ name: '', initiative: 0, maxHp: 0, isPlayer: true })
+  }
+
+  const addPresetCombatantToTracker = () => {
+    const preset = presets[trackerPresetKey]
+    if (!preset) return
+
+    const initiative = trackerInitiative ? parseInt(trackerInitiative) : 0
+    const combatant = {
+      id: generateId(),
+      key: trackerPresetKey,
+      name: preset.name,
+      isPlayer: preset.isPlayer,
+      maxHp: preset.maxHp,
+      curHp: preset.maxHp,
+      tempHp: 0,
+      initiative,
+      ac: preset.ac,
+      speed: preset.speed,
+      status: '',
+      statblock: preset.statblock || ''
+    }
+
+    const c = [...combatants, combatant]
+    const preserveCurrentId = currentTurnId || c[currentTurnIdx]?.id || combatant.id
+    const preserveSelectedId = combatant.id
+    const { sorted, newCurrentIdx, newSelectedIdx } = sortCombatants(c, preserveCurrentId, preserveSelectedId)
+    setCombatants(sorted)
+    setCurrentTurnIdx(newCurrentIdx)
+    setCurrentTurnId(sorted[newCurrentIdx]?.id || null)
+    setSelectedIdx(newSelectedIdx)
+    setTrackerInitiative('')
+    setActionHistory([...actionHistory, `R${roundNum} | Added ${combatant.name} to initiative (${combatant.initiative})`])
+  }
+
+  const addManualCombatantToTracker = () => {
+    if (!trackerNewCombatant.name || trackerNewCombatant.maxHp <= 0) {
+      alert('Name and positive HP required')
+      return
+    }
+
+    const combatant = {
+      id: generateId(),
+      key: null,
+      name: trackerNewCombatant.name,
+      isPlayer: trackerNewCombatant.isPlayer,
+      maxHp: trackerNewCombatant.maxHp,
+      curHp: trackerNewCombatant.maxHp,
+      tempHp: 0,
+      initiative: parseInt(trackerNewCombatant.initiative) || 0,
+      ac: '',
+      speed: '',
+      status: '',
+      statblock: ''
+    }
+
+    const c = [...combatants, combatant]
+    const preserveCurrentId = currentTurnId || c[currentTurnIdx]?.id || combatant.id
+    const preserveSelectedId = combatant.id
+    const { sorted, newCurrentIdx, newSelectedIdx } = sortCombatants(c, preserveCurrentId, preserveSelectedId)
+    setCombatants(sorted)
+    setCurrentTurnIdx(newCurrentIdx)
+    setCurrentTurnId(sorted[newCurrentIdx]?.id || null)
+    setSelectedIdx(newSelectedIdx)
+    setTrackerNewCombatant({ name: '', initiative: 0, maxHp: 0, isPlayer: true })
+    setActionHistory([...actionHistory, `R${roundNum} | Added ${combatant.name} to initiative (${combatant.initiative})`])
   }
 
   const removeFromSetup = (idx) => {
