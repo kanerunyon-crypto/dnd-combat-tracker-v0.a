@@ -59,8 +59,8 @@ h4 {
 h1 {
   color: var(--gold);
   text-align: center;
-  font-size: 1.5rem;
-  margin-bottom: 8px;
+  font-size: 1.65rem;
+  margin-bottom: 10px;
   text-shadow: 0 0 18px rgba(201, 162, 78, 0.22);
 }
 
@@ -73,14 +73,14 @@ h1 {
 
 h2 {
   color: var(--ink);
-  font-size: 0.98rem;
-  margin: 0 0 4px;
+  font-size: 1.05rem;
+  margin: 0 0 6px;
 }
 
 h3 {
   color: var(--ink-dim);
-  font-size: 0.8rem;
-  margin: 4px 0 2px;
+  font-size: 0.88rem;
+  margin: 6px 0 4px;
 }
 
 h4 {
@@ -91,9 +91,9 @@ h4 {
 
 .tabs {
   display: flex;
-  gap: 6px;
-  margin-bottom: 8px;
-  padding-bottom: 6px;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--line);
 }
 
@@ -101,9 +101,9 @@ h4 {
   border: 1px solid var(--line);
   background: linear-gradient(180deg, #312319 0%, #221912 100%);
   color: var(--ink-dim);
-  padding: 6px 12px;
+  padding: 7px 14px;
   border-radius: 6px;
-  font-size: 0.76rem;
+  font-size: 0.82rem;
   text-transform: uppercase;
 }
 
@@ -125,7 +125,7 @@ h4 {
   background: rgba(25, 19, 14, 0.88);
   border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 8px;
+  padding: 10px;
 }
 
 .section,
@@ -143,8 +143,8 @@ h4 {
 }
 
 .section {
-  padding: 8px;
-  margin-bottom: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
 }
 
 input[type="text"],
@@ -155,9 +155,9 @@ textarea {
   color: var(--ink);
   border: 1px solid #5f4a35;
   border-radius: 6px;
-  padding: 5px 7px;
-  font-size: 0.8rem;
-  margin: 2px 4px 2px 0;
+  padding: 6px 8px;
+  font-size: 0.86rem;
+  margin: 3px 5px 3px 0;
 }
 
 input:focus,
@@ -178,7 +178,7 @@ label {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.8rem;
+  font-size: 0.86rem;
   color: var(--ink-dim);
   margin-right: 8px;
 }
@@ -188,13 +188,13 @@ button {
   color: var(--ink);
   background: linear-gradient(180deg, #463322 0%, #35271b 100%);
   border-radius: 6px;
-  padding: 5px 9px;
-  font-size: 0.75rem;
+  padding: 6px 10px;
+  font-size: 0.8rem;
   cursor: pointer;
   white-space: normal;
   overflow-wrap: anywhere;
   word-break: break-word;
-  line-height: 1.15;
+  line-height: 1.2;
 }
 
 button:hover {
@@ -213,16 +213,16 @@ button:hover {
 }
 
 .btn-small {
-  font-size: 0.7rem;
-  padding: 4px 7px;
+  font-size: 0.76rem;
+  padding: 5px 8px;
 }
 
 .preset-buttons {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
-  margin: 4px 0;
+  margin: 6px 0;
 }
 
 .preset-buttons select {
@@ -237,9 +237,9 @@ button:hover {
 .combatant-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin: 4px 0;
-  max-height: 145px;
+  gap: 6px;
+  margin: 6px 0;
+  max-height: 180px;
   overflow-y: auto;
 }
 
@@ -248,12 +248,12 @@ button:hover {
   justify-content: space-between;
   align-items: flex-start;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
   background: rgba(0, 0, 0, 0.15);
   border-left: 3px solid var(--gold-soft);
   border-radius: 6px;
-  padding: 5px 6px;
-  font-size: 0.75rem;
+  padding: 7px 8px;
+  font-size: 0.82rem;
 }
 
 .combatant-item span {
@@ -275,17 +275,17 @@ button:hover {
   color: var(--gold);
   font-weight: 600;
   text-align: center;
-  font-size: 0.8rem;
-  padding: 6px;
-  margin-bottom: 8px;
+  font-size: 0.88rem;
+  padding: 8px;
+  margin-bottom: 10px;
 }
 
 .tracker-layout {
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(230px, 0.85fr) minmax(20px, 0.08fr) minmax(0, 1.55fr);
-  gap: 10px;
+  grid-template-columns: minmax(280px, 0.95fr) minmax(16px, 0.06fr) minmax(0, 1.6fr);
+  gap: 12px;
 }
 
 .tracker-left {
@@ -293,21 +293,21 @@ button:hover {
   min-height: 0;
   display: grid;
   grid-template-rows: auto auto;
-  gap: 6px;
+  gap: 8px;
 }
 
 .controls {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   overflow: visible;
   padding-right: 0;
 }
 
 .tracker-filters {
   display: grid;
-  gap: 6px;
+  gap: 8px;
 }
 
 .damage-type {
@@ -318,47 +318,47 @@ button:hover {
 .button-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 4px;
+  gap: 6px;
 }
 
 .button-section {
-  padding: 4px;
+  padding: 6px;
 }
 
 .button-section h3 {
-  margin-bottom: 3px;
+  margin-bottom: 5px;
   text-align: center;
-  font-size: 0.7rem;
+  font-size: 0.78rem;
 }
 
 .button-section button {
   width: 100%;
-  margin-bottom: 2px;
-  padding: 4px 5px;
-  font-size: 0.68rem;
+  margin-bottom: 3px;
+  padding: 5px 6px;
+  font-size: 0.74rem;
 }
 
 .aoe-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
+  gap: 8px;
 }
 
 .aoe-buttons {
   display: grid;
-  gap: 3px;
+  gap: 4px;
 }
 
 .aoe-btn {
-  font-size: 0.72rem;
+  font-size: 0.76rem;
 }
 
 .tracker-middle {
   grid-column: 3;
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(220px, 0.75fr);
-  gap: 8px;
+  grid-template-columns: minmax(0, 1.3fr) minmax(260px, 0.8fr);
+  gap: 10px;
 }
 
 .combatants-table {
@@ -391,8 +391,8 @@ table {
 
 th,
 td {
-  font-size: 0.72rem;
-  padding: 4px 6px;
+  font-size: 0.8rem;
+  padding: 6px 7px;
   border-bottom: 1px solid rgba(201, 162, 78, 0.14);
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -430,7 +430,7 @@ tr.multi-selected {
 
 .hp-bar {
   position: relative;
-  height: 18px;
+  height: 20px;
   border: 1px solid #5b4635;
   border-radius: 5px;
   overflow: hidden;
@@ -447,14 +447,14 @@ tr.multi-selected {
   inset: 0;
   display: grid;
   place-items: center;
-  font-size: 0.66rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: #fff9ef;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .init-input {
-  width: 64px;
+  width: 70px;
 }
 
 .status-cell {
@@ -468,8 +468,8 @@ tr.multi-selected {
   background: rgba(201, 162, 78, 0.2);
   border: 1px solid rgba(201, 162, 78, 0.5);
   color: var(--ink);
-  font-size: 0.66rem;
-  padding: 2px 6px;
+  font-size: 0.72rem;
+  padding: 3px 7px;
 }
 
 .tracker-right {
@@ -481,12 +481,12 @@ tr.multi-selected {
   width: 100%;
   min-height: 0;
   overflow: auto;
-  padding: 8px;
+  padding: 10px;
 }
 
 .selected-row {
-  font-size: 0.76rem;
-  margin-bottom: 3px;
+  font-size: 0.84rem;
+  margin-bottom: 5px;
   overflow-wrap: anywhere;
 }
 
@@ -498,9 +498,9 @@ tr.multi-selected {
   background: rgba(0, 0, 0, 0.22);
   border: 1px solid var(--line);
   border-radius: 6px;
-  padding: 6px;
-  font-size: 0.7rem;
-  max-height: 180px;
+  padding: 8px;
+  font-size: 0.76rem;
+  max-height: 220px;
   overflow: auto;
   white-space: pre-wrap;
   word-break: break-word;
@@ -509,7 +509,7 @@ tr.multi-selected {
 .button-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
 }
 
 .tracker-actions {
