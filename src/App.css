@@ -18,47 +18,47 @@ body {
 .app {
   max-width: 1680px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 8px;
   background-color: #1e1e1e;
   color: #e0e0e0;
 }
 
 h1 {
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 28px;
+  margin-bottom: 8px;
+  font-size: 20px;
   color: #b0d0ff;
 }
 
 h2 {
-  font-size: 18px;
-  margin: 15px 0 10px 0;
+  font-size: 14px;
+  margin: 6px 0 4px 0;
   color: #c0d0ff;
 }
 
 h3 {
-  font-size: 14px;
-  margin: 8px 0 6px 0;
+  font-size: 12px;
+  margin: 4px 0 2px 0;
   color: #a0b0d0;
 }
 
 /* Tabs */
 .tabs {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #444;
+  gap: 6px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #444;
   flex-wrap: wrap;
 }
 
 .tab-btn {
-  padding: 10px 20px;
+  padding: 6px 12px;
   background-color: #2a2a2a;
   color: #a0a0a0;
   border: none;
   cursor: pointer;
-  font-size: 14px;
-  border-bottom: 3px solid transparent;
+  font-size: 12px;
+  border-bottom: 2px solid transparent;
   transition: all 0.2s;
 }
 
@@ -74,16 +74,16 @@ h3 {
 
 .tab-content {
   background-color: #252525;
-  padding: 20px;
-  border-radius: 8px;
+  padding: 10px;
+  border-radius: 6px;
 }
 
 /* Sections */
 .section {
   background-color: #2d2d2d;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 8px;
+  border-radius: 4px;
   border: 1px solid #444;
 }
 
@@ -95,10 +95,10 @@ textarea {
   background-color: #2d2d2d;
   color: #e0e0e0;
   border: 1px solid #444;
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 14px;
-  margin: 5px 5px 5px 0;
+  padding: 4px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+  margin: 2px 2px 2px 0;
   width: auto;
 }
 
@@ -145,10 +145,10 @@ button {
   background-color: #3a3a3a;
   color: #e0e0e0;
   border: 1px solid #555;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 5px 10px;
+  border-radius: 3px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 11px;
   transition: all 0.2s;
 }
 
@@ -183,14 +183,15 @@ button:active {
 .preset-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 10px 0;
+  gap: 4px;
+  margin: 4px 0;
 }
 
 .preset-btn {
   background-color: #3a5a9a;
   border-color: #4a6aaa;
-  padding: 10px 14px;
+  padding: 6px 10px;
+  font-size: 10px;
 }
 
 .preset-btn:hover {
@@ -200,10 +201,11 @@ button:active {
 .combatant-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin: 10px 0;
-  max-height: 300px;
+  gap: 4px;
+  margin: 4px 0;
+  max-height: 150px;
   overflow-y: auto;
+  font-size: 11px;
 }
 
 .combatant-item {
@@ -211,9 +213,9 @@ button:active {
   justify-content: space-between;
   align-items: center;
   background-color: #333;
-  padding: 10px;
-  border-radius: 4px;
-  border-left: 3px solid #4a6fc3;
+  padding: 4px 6px;
+  border-radius: 3px;
+  border-left: 2px solid #4a6fc3;
 }
 
 .combatant-item button {
@@ -226,17 +228,16 @@ button:active {
 .stats-bar {
   background-color: #2a3a4a;
   color: #b0d0ff;
-  padding: 12px;
-  border-radius: 6px;
-  margin-bottom: 15px;
+  padding: 6px;
+  border-radius: 4px;
+  margin-bottom: 8px;
   font-weight: bold;
   text-align: center;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .tracker-tab {
-  min-height: calc(100vh - 180px);
-  height: auto;
+  height: calc(100vh - 100px);
   display: flex;
   flex-direction: column;
   overflow: auto;
@@ -245,8 +246,9 @@ button:active {
 .controls {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 6px;
+  margin-bottom: 8px;
+}
 }
 
 .tracker-add-panel {
@@ -313,27 +315,30 @@ button:active {
 }
 
 .button-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  displtemplate-columns: repeat(2, minmax(0, 1fr));
+  gap: ay: grid;
+  grid-6px;
 }
 
 .button-section {
   background-color: #2d2d2d;
-  padding: 10px;
-  border-radius: 6px;
+  padding: 6px;
+  border-radius: 4px;
   border: 1px solid #444;
 }
 
 .button-section h3 {
   text-align: center;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
+  font-size: 11px;
 }
 
 .button-section button {
   width: 100%;
-  margin-bottom: 5px;
-  padding: 10px;
+  margin-bottom: 2px;
+  padding: 5px 6px;
+  background-color: #3a5a9a;
+  font-size: 10px
   background-color: #3a5a9a;
 }
 
@@ -374,8 +379,8 @@ button:active {
   font-size: 12px;
   color: #c0c0c0;
 }
-
-.tracker-layout {
+2fr 0.05fr 1.4fr 1.1fr;
+  gap: 1-layout {
   display: grid;
   grid-template-columns: 1.3fr 0.08fr 1.4fr 1.2fr;
   gap: 20px;
@@ -495,15 +500,13 @@ table {
   border-radius: 6px;
   overflow: hidden;
 }
-
-th {
   background-color: #2a2a2a;
   color: #c0c0c0;
-  padding: 10px;
+  padding: 4px 6px;
   text-align: left;
   font-weight: 600;
-  border-bottom: 2px solid #444;
-  font-size: 13px;
+  border-bottom: 1px solid #444;
+  font-size: 11px;
 }
 
 tr {
@@ -512,7 +515,10 @@ tr {
 }
 
 td {
-  padding: 10px;
+  padding: 4px 6px;
+  color: #e0e0e0;
+  font-size: 11px;
+}
   color: #e0e0e0;
   font-size: 13px;
 }
