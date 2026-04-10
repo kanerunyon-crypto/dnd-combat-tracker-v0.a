@@ -838,39 +838,38 @@ function App() {
                   </tbody>
                 </table>
               </div>
-            </div>
-
-              <div className="button-group tracker-actions">
-                <button onClick={nextTurn} className="btn-primary">Next Turn</button>
-                <button onClick={undoLast}>Undo Last</button>
-                <button onClick={stopCombat}>Stop Combat</button>
-                <button onClick={resetCombat}>Reset</button>
+              <div className="tracker-right">
+                <div className="selected-panel">
+                  <h3>Selected Combatant</h3>
+                  {selectedCombatant ? (
+                    <>
+                      <div className="selected-row"><strong>Name:</strong> {selectedCombatant.name}</div>
+                      <div className="selected-row"><strong>AC:</strong> {selectedCombatant.ac || '—'}</div>
+                      <div className="selected-row"><strong>Speed:</strong> {selectedCombatant.speed || '—'}</div>
+                      <div className="selected-row"><strong>HP:</strong> {selectedCombatant.curHp}/{selectedCombatant.maxHp}</div>
+                      <div className="selected-row"><strong>Temp HP:</strong> {selectedCombatant.tempHp || '0'}</div>
+                      <div className="selected-row"><strong>Init:</strong> {selectedCombatant.initiative}</div>
+                      <div className="selected-row"><strong>Status:</strong> {selectedCombatant.status || 'None'}</div>
+                      <div className="selected-row"><strong>Preset:</strong> {selectedCombatant.key || 'Manual'}</div>
+                      <div className="statblock">
+                        <h4>Stat Block</h4>
+                        <pre>{selectedCombatant.statblock || 'No statblock available.'}</pre>
+                      </div>
+                    </>
+                  ) : (
+                    <p>Select a combatant from the table to see details here.</p>
+                  )}
+                </div>
               </div>
             </div>
 
-        <div className="tracker-right">
-          <div className="selected-panel">
-            <h3>Selected Combatant</h3>
-            {selectedCombatant ? (
-              <>
-                <div className="selected-row"><strong>Name:</strong> {selectedCombatant.name}</div>
-                <div className="selected-row"><strong>AC:</strong> {selectedCombatant.ac || '—'}</div>
-                <div className="selected-row"><strong>Speed:</strong> {selectedCombatant.speed || '—'}</div>
-                <div className="selected-row"><strong>HP:</strong> {selectedCombatant.curHp}/{selectedCombatant.maxHp}</div>
-                <div className="selected-row"><strong>Temp HP:</strong> {selectedCombatant.tempHp || '0'}</div>
-                <div className="selected-row"><strong>Init:</strong> {selectedCombatant.initiative}</div>
-                <div className="selected-row"><strong>Status:</strong> {selectedCombatant.status || 'None'}</div>
-                <div className="selected-row"><strong>Preset:</strong> {selectedCombatant.key || 'Manual'}</div>
-                <div className="statblock">
-                  <h4>Stat Block</h4>
-                  <pre>{selectedCombatant.statblock || 'No statblock available.'}</pre>
-                </div>
-              </>
-            ) : (
-              <p>Select a combatant from the table to see details here.</p>
-            )}
+            <div className="button-group tracker-actions">
+              <button onClick={nextTurn} className="btn-primary">Next Turn</button>
+              <button onClick={undoLast}>Undo Last</button>
+              <button onClick={stopCombat}>Stop Combat</button>
+              <button onClick={resetCombat}>Reset</button>
+            </div>
           </div>
-        </div>
       </div>
             </>
           )}
