@@ -24,6 +24,7 @@ function App() {
   const [damageByType, setDamageByType] = useState({})
   const [searchQuery, setSearchQuery] = useState('')
   const [filterDeadOnly, setFilterDeadOnly] = useState(false)
+  const [setupPresetKey, setSetupPresetKey] = useState('')
   const [trackerPresetKey, setTrackerPresetKey] = useState('')
   const [trackerInitiative, setTrackerInitiative] = useState('')
   const [trackerNewCombatant, setTrackerNewCombatant] = useState({ name: '', initiative: 0, maxHp: 0, isPlayer: true })
@@ -53,11 +54,11 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (!trackerPresetKey) {
+    if (!setupPresetKey) {
       const firstPresetKey = Object.keys(presets)[0]
-      if (firstPresetKey) setTrackerPresetKey(firstPresetKey)
+      if (firstPresetKey) setSetupPresetKey(firstPresetKey)
     }
-  }, [presets, trackerPresetKey])
+  }, [presets, setupPresetKey])
 
   useEffect(() => {
     if (!trackerPresetKey) {
@@ -629,11 +630,12 @@ function App() {
 
               <h3>Quick Add Presets</h3>
               <div className="preset-buttons">
-                {Object.entries(presets).map(([key, preset]) => (
-                  <button key={key} onClick={() => addPresetCombatant(key)} className="preset-btn">
-                    {preset.name} ({preset.maxHp} HP)
-                  </button>
-                ))}
+                <select value={setupPresetKey} onChange={e => setSetupPresetKey(e.target.value)}>
+                  {Object.entries(presets).map(([key, preset]) => (
+                    <option key={key} value={key}>{preset.name} ({preset.maxHp} HP)</option>
+                  ))}
+                </select>
+                <button onClick={() => addPresetCombatant(setupPresetKey)} className="preset-btn" disabled={!setupPresetKey}>Add Preset</button>
               </div>
 
               <h3>Manual Add</h3>
@@ -669,15 +671,16 @@ function App() {
               <div className="controls">
             <div className="section">
               <h2>Add To Combat</h2>
-              <input type="number" placeholder="Initiative (blank = 0)" value={newInitiative} onChange={e => setNewInitiative(e.target.value)} />
+              <input type="number" placeholder="Initiative (blank = 0)" value={trackerInitiative} onChange={e => setTrackerInitiative(e.target.value)} />
 
               <h3>Quick Add Presets</h3>
               <div className="preset-buttons">
-                {Object.entries(presets).map(([key, preset]) => (
-                  <button key={key} onClick={() => addPresetCombatant(key)} className="preset-btn">
-                    {preset.name} ({preset.maxHp} HP)
-                  </button>
-                ))}
+                <select value={trackerPresetKey} onChange={e => setTrackerPresetKey(e.target.value)}>
+                  {Object.entries(presets).map(([key, preset]) => (
+                    <option key={key} value={key}>{preset.name} ({preset.maxHp} HP)</option>
+                  ))}
+                </select>
+                <button onClick={addPresetCombatantToTracker} className="preset-btn" disabled={!trackerPresetKey}>Add Preset</button>
               </div>
 
               <h3>Manual Add</h3>
